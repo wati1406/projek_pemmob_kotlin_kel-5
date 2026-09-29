@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.math_quiz.ui.screens.LevelSelectionScreen
 import com.example.math_quiz.ui.screens.MainMenuScreen
+import com.example.math_quiz.ui.screens.SettingsScreen
 import com.example.math_quiz.ui.screens.SplashScreen
 import com.example.math_quiz.ui.theme.MathquizTheme
 
@@ -41,7 +42,14 @@ class MainActivity : ComponentActivity() {
                                 currentLevel = 3,
                                 onPlayClick = { currentScreen = "LEVEL_SELECTION" },
                                 onHighScoreClick = { /* High Score dialog/screen */ },
-                                onSettingsClick = { /* Navigasi ke Settings nanti */ }
+                                onSettingsClick = { currentScreen = "SETTINGS" }
+                            )
+                        }
+                        "SETTINGS" -> {
+                            SettingsScreen(
+                                modifier = Modifier.padding(innerPadding),
+                                onBackClick = { currentScreen = "MAIN_MENU" },
+                                onAboutClick = { /* TODO: About dialog */ }
                             )
                         }
                         "LEVEL_SELECTION" -> {
