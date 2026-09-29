@@ -18,6 +18,7 @@ import com.example.math_quiz.ui.screens.LevelSelectionScreen
 import com.example.math_quiz.ui.screens.MainMenuScreen
 import com.example.math_quiz.ui.screens.SettingsScreen
 import com.example.math_quiz.ui.screens.SplashScreen
+import com.example.math_quiz.ui.screens.QuizScreen
 import com.example.math_quiz.ui.theme.MathquizTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
             MathquizTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     var currentScreen by remember { mutableStateOf("SPLASH") }
+                    var selectedLevel by remember { mutableStateOf(1) }
 
                     when (currentScreen) {
                         "SPLASH" -> {
@@ -56,9 +58,26 @@ class MainActivity : ComponentActivity() {
                             LevelSelectionScreen(
                                 modifier = Modifier.padding(innerPadding),
                                 onBackClick = { currentScreen = "MAIN_MENU" },
-                                onEasyClick = { /* Navigasi ke game Easy nanti */ },
-                                onMediumClick = { /* Navigasi ke game Medium nanti */ },
-                                onHardClick = { /* Navigasi ke game Hard nanti */ }
+                                onEasyClick = {
+                                    selectedLevel = 1
+                                    currentScreen = "QUIZ"
+                                },
+                                onMediumClick = {
+                                    selectedLevel = 2
+                                    currentScreen = "QUIZ"
+                                },
+                                onHardClick = {
+                                    selectedLevel = 3
+                                    currentScreen = "QUIZ"
+                                }
+                            )
+                        }
+                        "QUIZ" -> {
+                            QuizScreen(
+                                level = selectedLevel,
+                                modifier = Modifier.padding(innerPadding),
+                                onBackClick = { currentScreen = "LEVEL_SELECTION" },
+                                onOptionSelected = { /* Logic will be handled later */ }
                             )
                         }
                     }
