@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
                                 onTimeout = { currentScreen = "MAIN_MENU" }
                             )
                         }
+
                         "MAIN_MENU" -> {
                             MainMenuScreen(
                                 modifier = Modifier.padding(innerPadding),
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
                                 onSettingsClick = { currentScreen = "SETTINGS" }
                             )
                         }
+
                         "SETTINGS" -> {
                             SettingsScreen(
                                 modifier = Modifier.padding(innerPadding),
@@ -54,6 +56,7 @@ class MainActivity : ComponentActivity() {
                                 onAboutClick = { /* TODO: About dialog */ }
                             )
                         }
+
                         "LEVEL_SELECTION" -> {
                             LevelSelectionScreen(
                                 modifier = Modifier.padding(innerPadding),
@@ -72,12 +75,27 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+
                         "QUIZ" -> {
                             QuizScreen(
                                 level = selectedLevel,
                                 modifier = Modifier.padding(innerPadding),
                                 onBackClick = { currentScreen = "LEVEL_SELECTION" },
                                 onOptionSelected = { /* Logic will be handled later */ }
+                            )
+                        }
+
+                        "CORRECT" -> {
+                            com.example.math_quiz.ui.screens.QuizScreenCorrectState(
+                                onNextQuestion = { currentScreen = "RESULT" }
+                            )
+                        }
+
+                        "RESULT" -> {
+                            com.example.math_quiz.ui.screens.QuizResultDialog(
+                                onNextLevel = { currentScreen = "MAIN_MENU" },
+                                onPlayAgain = { currentScreen = "MAIN_MENU" },
+                                onHome = { currentScreen = "MAIN_MENU" }
                             )
                         }
                     }
