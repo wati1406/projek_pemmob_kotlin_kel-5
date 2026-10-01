@@ -158,16 +158,16 @@ fun PrimaryButton(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(horizontal = 32.dp)
+                    modifier = Modifier.padding(horizontal = 12.dp)
                 ) {
                     if (showPlayIcon) {
                         Box(
                             modifier = Modifier
-                                .size(38.dp)
+                                .size(32.dp)
                                 .shadow(2.dp, CircleShape, spotColor = Color(0x33000000)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Canvas(modifier = Modifier.size(30.dp)) {
+                            Canvas(modifier = Modifier.size(24.dp)) {
                                 val w = size.width
                                 val h = size.height
                                 val playPath = Path().apply {
@@ -182,7 +182,7 @@ fun PrimaryButton(
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(14.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                     }
 
                     Text(

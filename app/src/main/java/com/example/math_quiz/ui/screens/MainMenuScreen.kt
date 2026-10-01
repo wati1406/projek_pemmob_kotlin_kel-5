@@ -106,39 +106,13 @@ fun MainMenuScreen(
         val w = maxWidth
         val h = maxHeight
 
-        // 1. Aksen Blobs Lembut di Sudut-Sudut Layar (sesuai mockup main menu)
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val widthPx = size.width
-            val heightPx = size.height
-
-            // Top-left: Soft Sky Blue
-            drawCircle(
-                color = BlobBlue.copy(alpha = 0.55f),
-                center = Offset(widthPx * 0.05f, heightPx * 0.02f),
-                radius = widthPx * 0.38f
-            )
-
-            // Top-right: Soft Sky Blue blob
-            drawCircle(
-                color = BlobBlue.copy(alpha = 0.45f),
-                center = Offset(widthPx * 0.95f, heightPx * 0.05f),
-                radius = widthPx * 0.35f
-            )
-
-            // Bottom-left: Warm Pastel Yellow
-            drawCircle(
-                color = BlobYellow.copy(alpha = 0.75f),
-                center = Offset(widthPx * 0.02f, heightPx * 0.96f),
-                radius = widthPx * 0.45f
-            )
-
-            // Bottom-right: Soft Blue Wave
-            drawCircle(
-                color = BlobBlue.copy(alpha = 0.65f),
-                center = Offset(widthPx * 0.98f, heightPx * 0.98f),
-                radius = widthPx * 0.42f
-            )
-        }
+        // 1. Background Image (dari file ChatGPT Image)
+        Image(
+            painter = painterResource(id = R.drawable.main_menu_bg),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
 
         // 2. Elemen Matematika Mengambang di Area Atas
         // Kiri Atas: Angka "3" (Biru Muda 3D)
@@ -146,7 +120,7 @@ fun MainMenuScreen(
             text = "3",
             fontSize = 52.sp,
             fontWeight = FontWeight.Black,
-            color = QuizBlueLight,
+            color = QuizBlue,
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(start = 32.dp, top = 55.dp)
@@ -200,14 +174,6 @@ fun MainMenuScreen(
                 .background(QuizBlueLight.copy(alpha = 0.5f), CircleShape)
         )
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(end = 65.dp, top = 290.dp)
-                .size(10.dp)
-                .background(QuizBlueLight.copy(alpha = 0.45f), CircleShape)
-        )
-
         // Dot aksen di bagian bawah
         Box(
             modifier = Modifier
@@ -254,24 +220,6 @@ fun MainMenuScreen(
                     )
                 }
 
-                // Percikan Kuning di atas kepala maskot
-                Canvas(modifier = Modifier.size(190.dp)) {
-                    val cx = size.width / 2
-                    val cy = size.height / 2
-                    drawRoundRect(
-                        color = QuizYellow,
-                        topLeft = Offset(cx + 28f, cy - 74f),
-                        size = Size(8f, 18f),
-                        cornerRadius = CornerRadius(4f, 4f)
-                    )
-                    drawRoundRect(
-                        color = QuizYellow,
-                        topLeft = Offset(cx + 46f, cy - 60f),
-                        size = Size(8f, 15f),
-                        cornerRadius = CornerRadius(4f, 4f)
-                    )
-                }
-
                 // Maskot Buku Cute
                 CuteBookMascot(
                     modifier = Modifier.size(145.dp)
@@ -285,16 +233,28 @@ fun MainMenuScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                // Spark kiri
-                Text(
-                    text = "ヾ",
-                    fontSize = 20.sp,
-                    color = QuizYellow,
-                    fontWeight = FontWeight.Bold,
+                // Spark kiri (Dua pill kuning)
+                Canvas(
                     modifier = Modifier
-                        .padding(end = 6.dp)
-                        .rotate(45f)
-                )
+                        .size(width = 12.dp, height = 18.dp)
+                        .rotate(-15f)
+                ) {
+                    // Pill pendek kiri
+                    drawRoundRect(
+                        color = QuizYellow,
+                        topLeft = Offset(0f, 6f),
+                        size = Size(4f, 10f),
+                        cornerRadius = CornerRadius(2f, 2f)
+                    )
+                    // Pill tinggi kanan
+                    drawRoundRect(
+                        color = QuizYellow,
+                        topLeft = Offset(8f, 0f),
+                        size = Size(4f, 18f),
+                        cornerRadius = CornerRadius(2f, 2f)
+                    )
+                }
+                Spacer(modifier = Modifier.width(10.dp))
 
                 Text(
                     text = "Math",
@@ -317,6 +277,14 @@ fun MainMenuScreen(
                         spotColor = QuizOrangeDark.copy(alpha = 0.35f)
                     )
                 )
+
+                // Dot kanan
+                Box(
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(8.dp)
+                        .background(QuizBlueLight, CircleShape)
+                )
             }
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -332,39 +300,39 @@ fun MainMenuScreen(
 
             Spacer(modifier = Modifier.height(42.dp))
 
-            // D. Tombol Besar: "PLAY" (Persis sesuai ChatGPT Image Sep 15, 2026, 02_06_47 PM.png)
+            // D. Tombol Besar: "PLAY" 
             PrimaryButton(
                 text = "PLAY",
-                imageResId = R.drawable.btn_play,
+                imageResId = null,
                 onClick = onPlayClick,
-                height = 86.dp,
-                modifier = Modifier.fillMaxWidth(0.94f)
+                height = 64.dp,
+                fontSize = 24.sp,
+                modifier = Modifier.fillMaxWidth(0.55f)
             )
 
-            Spacer(modifier = Modifier.height(18.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
             // E. Dua Tombol Sejajar: "HIGH SCORE" & "SETTINGS"
-            // Persis sesuai file ChatGPT_Image_Sep_15__2026__02_08_55_PM-removebg-preview.png dan ChatGPT_Image_15_Sep_2026__14.13.35-removebg-preview.png
             Row(
-                modifier = Modifier.fillMaxWidth(0.94f),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier.fillMaxWidth(0.9f),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Tombol HIGH SCORE asli
+                // Tombol HIGH SCORE
                 MenuAssetButton(
                     imageResId = R.drawable.btn_high_score,
                     contentDescription = "HIGH SCORE",
                     onClick = onHighScoreClick,
-                    height = 60.dp,
+                    height = 70.dp,
                     modifier = Modifier.weight(1.05f)
                 )
 
-                // Tombol SETTINGS asli
+                // Tombol SETTINGS
                 MenuAssetButton(
                     imageResId = R.drawable.btn_settings,
                     contentDescription = "SETTINGS",
                     onClick = onSettingsClick,
-                    height = 60.dp,
+                    height = 70.dp,
                     modifier = Modifier.weight(0.95f)
                 )
             }
