@@ -81,7 +81,8 @@ class MainActivity : ComponentActivity() {
                                 level = selectedLevel,
                                 modifier = Modifier.padding(innerPadding),
                                 onBackClick = { currentScreen = "LEVEL_SELECTION" },
-                                onOptionSelected = { /* Logic will be handled later */ }
+                                onOptionSelected = { /* Logic will be handled later */ },
+                                onQuizCompleted = { currentScreen = "RESULT" }
                             )
                         }
 
