@@ -59,6 +59,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.math_quiz.R
 import com.example.math_quiz.data.QuizRepository
 import com.example.math_quiz.ui.components.PrimaryButton
+import com.example.math_quiz.ui.components.IncorrectPopupContent
 import com.example.math_quiz.ui.theme.*
 import kotlinx.coroutines.delay
 
@@ -190,6 +191,13 @@ fun QuizScreen(
                     CorrectInCardBanner(
                         pointsEarned = 10,
                         modifier = Modifier.align(Alignment.BottomCenter)
+                    )
+                }
+
+                if (feedbackType == FeedbackType.INCORRECT) {
+                    IncorrectPopupContent(
+                        correctAnswer = currentQuestion.correctAnswer,
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
 
@@ -555,6 +563,8 @@ fun QuizOptionsGrid(
     onOptionSelected: (String) -> Unit
 ) {
     val isAnswered = feedbackType != FeedbackType.NONE
+    // Teks gelap (navy) saat tombol putih (belum dijawab), putih saat tombol berwarna (sudah dijawab)
+    val answerTextColor = if (isAnswered) Color.White else QuizTextNavy
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -568,8 +578,10 @@ fun QuizOptionsGrid(
                 buttonColor = btnColor0,
                 shadowColor = shadowColor0,
                 enabled = !isAnswered,
-                isCorrect = (feedbackType == FeedbackType.CORRECT || feedbackType == FeedbackType.TIME_UP) && opt0 == correctAnswer,
+                isCorrect = isAnswered && opt0 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt0 == selectedOption && opt0 != correctAnswer,
+                textColor = answerTextColor,
+                showBorder = !isAnswered,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt0) }
             )
@@ -580,8 +592,10 @@ fun QuizOptionsGrid(
                 buttonColor = btnColor1,
                 shadowColor = shadowColor1,
                 enabled = !isAnswered,
-                isCorrect = (feedbackType == FeedbackType.CORRECT || feedbackType == FeedbackType.TIME_UP) && opt1 == correctAnswer,
+                isCorrect = isAnswered && opt1 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt1 == selectedOption && opt1 != correctAnswer,
+                textColor = answerTextColor,
+                showBorder = !isAnswered,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt1) }
             )
@@ -598,8 +612,10 @@ fun QuizOptionsGrid(
                 buttonColor = btnColor2,
                 shadowColor = shadowColor2,
                 enabled = !isAnswered,
-                isCorrect = (feedbackType == FeedbackType.CORRECT || feedbackType == FeedbackType.TIME_UP) && opt2 == correctAnswer,
+                isCorrect = isAnswered && opt2 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt2 == selectedOption && opt2 != correctAnswer,
+                textColor = answerTextColor,
+                showBorder = !isAnswered,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt2) }
             )
@@ -610,8 +626,10 @@ fun QuizOptionsGrid(
                 buttonColor = btnColor3,
                 shadowColor = shadowColor3,
                 enabled = !isAnswered,
-                isCorrect = (feedbackType == FeedbackType.CORRECT || feedbackType == FeedbackType.TIME_UP) && opt3 == correctAnswer,
+                isCorrect = isAnswered && opt3 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt3 == selectedOption && opt3 != correctAnswer,
+                textColor = answerTextColor,
+                showBorder = !isAnswered,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt3) }
             )
@@ -628,9 +646,10 @@ private fun getOptionColors(
     isAnswered: Boolean,
     feedbackType: FeedbackType = FeedbackType.NONE
 ): Pair<Color, Color> {
-    if (!isAnswered) return Pair(defaultBase, defaultDark)
+    // Default: tombol putih bersih sebelum dijawab
+    if (!isAnswered) return Pair(Color.White, Color(0xFFCBD5E1))
 
-    // Khusus Time's Up: Jawaban benar disorot hijau, opsi lainnya abu-abu netral (disabled) seperti di referensi
+    // Khusus Time's Up: Jawaban benar disorot hijau, opsi lainnya abu-abu netral
     if (feedbackType == FeedbackType.TIME_UP) {
         return if (option == correctAnswer) {
             Pair(Color(0xFF22C55E), Color(0xFF16A34A))
@@ -639,10 +658,12 @@ private fun getOptionColors(
         }
     }
 
+    // CORRECT: hanya jawaban benar yang hijau, lainnya abu-abu
+    // INCORRECT: jawaban benar hijau, jawaban dipilih merah, lainnya abu-abu
     return when {
         option == correctAnswer -> Pair(Color(0xFF22C55E), Color(0xFF16A34A))
         option == selectedOption -> Pair(Color(0xFFEF4444), Color(0xFFDC2626))
-        else -> Pair(defaultBase.copy(alpha = 0.45f), defaultDark.copy(alpha = 0.45f))
+        else -> Pair(Color(0xFF94A3B8), Color(0xFF64748B))
     }
 }
 
@@ -655,6 +676,8 @@ fun QuizOptionButton(
     enabled: Boolean = true,
     isCorrect: Boolean = false,
     isWrong: Boolean = false,
+    textColor: Color = Color.White,
+    showBorder: Boolean = false,
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -666,23 +689,46 @@ fun QuizOptionButton(
         label = "btnScale"
     )
 
+    // Warna 3-stop glossy: terang atas, mid tengah, gelap bawah
+    val isWhite = buttonColor == Color.White
+    val topColor = if (isWhite) Color(0xFFFFFFFF) else Color(
+        (buttonColor.red + (1f - buttonColor.red) * 0.35f).coerceIn(0f, 1f),
+        (buttonColor.green + (1f - buttonColor.green) * 0.35f).coerceIn(0f, 1f),
+        (buttonColor.blue + (1f - buttonColor.blue) * 0.35f).coerceIn(0f, 1f)
+    )
+    val botColor = if (isWhite) Color(0xFFE2E8F3) else Color(
+        (buttonColor.red * 0.68f).coerceIn(0f, 1f),
+        (buttonColor.green * 0.68f).coerceIn(0f, 1f),
+        (buttonColor.blue * 0.68f).coerceIn(0f, 1f)
+    )
+
     Box(
         modifier = modifier
             .height(110.dp)
             .scale(scale)
             .shadow(
-                if (isPressed && enabled) 2.dp else 10.dp,
-                RoundedCornerShape(24.dp),
-                spotColor = shadowColor,
-                ambientColor = shadowColor
+                elevation = if (isPressed && enabled) 2.dp else if (showBorder) 8.dp else 14.dp,
+                shape = RoundedCornerShape(24.dp),
+                spotColor = shadowColor.copy(alpha = if (isWhite) 0.22f else 0.55f),
+                ambientColor = shadowColor.copy(alpha = if (isWhite) 0.10f else 0.28f)
             )
             .clip(RoundedCornerShape(24.dp))
+            // Gradien 3-stop: terang atas → warna asli tengah → gelap bawah
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(buttonColor.copy(alpha = 0.9f), buttonColor),
-                    startY = 0f,
-                    endY = 300f
+                    colorStops = arrayOf(
+                        0.00f to topColor,
+                        0.50f to buttonColor,
+                        1.00f to botColor
+                    )
                 )
+            )
+            .then(
+                if (showBorder) Modifier.border(
+                    width = 2.dp,
+                    color = Color(0xFFDDE3EE),
+                    shape = RoundedCornerShape(24.dp)
+                ) else Modifier
             )
             .clickable(
                 interactionSource = interactionSource,
@@ -692,40 +738,91 @@ fun QuizOptionButton(
             ),
         contentAlignment = Alignment.Center
     ) {
-        // Inner shadow / bottom darken for 3D feel
+        // ── Layer 1: bottom darken strip untuk kedalaman 3D
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .fillMaxHeight(0.42f)
+                .align(Alignment.BottomCenter)
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.15f)),
-                        startY = 150f,
-                        endY = 300f
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.Black.copy(alpha = if (isWhite) 0.06f else 0.24f)
+                        )
                     )
                 )
         )
 
-        // Glossy highlight effect at the top (curved)
+        // ── Layer 2: Canvas glossy berlapis
         Canvas(modifier = Modifier.fillMaxSize()) {
+            val w = size.width
+            val h = size.height
+
+            // 2a. Highlight lebar atas → fade ke transparan (kaca)
+            drawRect(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = if (isWhite) 0.52f else 0.36f),
+                        Color.White.copy(alpha = 0f)
+                    ),
+                    startY = 0f,
+                    endY = h * 0.62f
+                ),
+                size = Size(w, h * 0.62f)
+            )
+
+            // 2b. Pil glossy tebal di atas (kilau kuat)
             drawRoundRect(
-                color = Color.White.copy(alpha = 0.3f),
-                topLeft = Offset(16.dp.toPx(), 4.dp.toPx()),
-                size = Size(size.width - 32.dp.toPx(), 20.dp.toPx()),
-                cornerRadius = CornerRadius(10.dp.toPx(), 10.dp.toPx())
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = if (isWhite) 0.88f else 0.52f),
+                        Color.White.copy(alpha = 0f)
+                    ),
+                    startY = h * 0.04f,
+                    endY = h * 0.32f
+                ),
+                topLeft = Offset(w * 0.10f, h * 0.07f),
+                size = Size(w * 0.80f, h * 0.24f),
+                cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx())
+            )
+
+            // 2c. Kilauan tepi kiri (efek silinder)
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = if (isWhite) 0.28f else 0.15f),
+                        Color.Transparent
+                    ),
+                    startX = 0f,
+                    endX = w * 0.20f
+                )
+            )
+
+            // 2d. Kilauan tepi kanan
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        Color.White.copy(alpha = if (isWhite) 0.18f else 0.08f)
+                    ),
+                    startX = w * 0.80f,
+                    endX = w
+                )
             )
         }
-        
+        // ── Teks angka
         Text(
             text = text,
-            color = Color.White,
+            color = textColor,
             fontSize = 44.sp,
             fontWeight = FontWeight.Black,
             textAlign = TextAlign.Center,
             style = androidx.compose.ui.text.TextStyle(
                 shadow = androidx.compose.ui.graphics.Shadow(
-                    color = Color.Black.copy(alpha = 0.2f),
+                    color = if (isWhite) Color(0x1A000000) else Color.Black.copy(alpha = 0.30f),
                     offset = Offset(0f, 4f),
-                    blurRadius = 4f
+                    blurRadius = 6f
                 )
             )
         )
