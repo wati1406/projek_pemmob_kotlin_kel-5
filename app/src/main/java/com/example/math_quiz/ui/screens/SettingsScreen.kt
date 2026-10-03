@@ -527,7 +527,7 @@ private fun SettingsIconBox(
     }
 }
 
-/** Tombol back (rounded square putih) */
+/** Tombol back menggunakan asset back.png asli */
 @Composable
 private fun BackButton(
     onClick: () -> Unit,
@@ -541,27 +541,19 @@ private fun BackButton(
         label = "backBtnScale"
     )
 
-    Box(
+    Image(
+        painter = painterResource(id = R.drawable.back),
+        contentDescription = "Back",
+        contentScale = ContentScale.Fit,
         modifier = modifier
             .scale(scale)
             .size(44.dp)
-            .shadow(4.dp, RoundedCornerShape(14.dp), spotColor = Color(0x18000000))
-            .clip(RoundedCornerShape(14.dp))
-            .background(Color.White)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "\u2190",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = QuizTextNavy
-        )
-    }
+            )
+    )
 }
 
 @Preview(showBackground = true, widthDp = 390, heightDp = 844)

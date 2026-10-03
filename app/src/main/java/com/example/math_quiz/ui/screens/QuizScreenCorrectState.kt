@@ -1,5 +1,6 @@
 package com.example.math_quiz.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,6 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.math_quiz.R
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,16 +42,13 @@ fun QuizScreenCorrectState(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Back Button
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .shadow(2.dp, CircleShape)
-                    .background(Color.White, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("←", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E3A8A))
-            }
+            // Back Button menggunakan asset back.png asli
+            Image(
+                painter = painterResource(id = R.drawable.back),
+                contentDescription = "Back",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(44.dp)
+            )
 
             // Pills Info
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -189,16 +190,13 @@ fun QuizScreenIncorrectState(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Back Button
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .shadow(2.dp, CircleShape)
-                    .background(Color.White, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("←", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E3A8A))
-            }
+            // Back Button menggunakan asset back.png asli
+            Image(
+                painter = painterResource(id = R.drawable.back),
+                contentDescription = "Back",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(44.dp)
+            )
 
             // Pills Info
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

@@ -260,83 +260,92 @@ fun QuizTopBar(
     score: Int,
     onBackClick: () -> Unit
 ) {
+    // Warna badge biru muda playful
+    val badgeBg    = Color(0xFFE0F2FE)  // biru muda pastel
+    val badgeBorder= Color(0xFF7DD3FC)  // biru terang border
+    val badgeText  = Color(0xFF1D4ED8)  // biru gelap teks
+    val badgeShape = RoundedCornerShape(50.dp)
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Back Button
-        Box(
+        // ── Tombol Back (tidak diubah)
+        Image(
+            painter = painterResource(id = R.drawable.back),
+            contentDescription = "Back",
+            contentScale = ContentScale.Fit,
             modifier = Modifier
                 .size(42.dp)
-                .shadow(4.dp, RoundedCornerShape(14.dp))
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color.White)
-                .clickable { onBackClick() },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "←",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = QuizTextNavy
-            )
-        }
+                .clickable { onBackClick() }
+        )
 
-        // Level Indicator
+        // ── Badge Level
         Box(
             modifier = Modifier
-                .height(42.dp)
-                .shadow(2.dp, RoundedCornerShape(21.dp))
-                .clip(RoundedCornerShape(21.dp))
-                .background(Color.White)
-                .padding(horizontal = 16.dp),
+                .height(36.dp)
+                .shadow(3.dp, badgeShape, spotColor = Color(0x307DD3FC))
+                .clip(badgeShape)
+                .background(badgeBg)
+                .border(1.5.dp, badgeBorder, badgeShape)
+                .padding(horizontal = 14.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "Level $level",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = QuizTextNavy
+                fontSize = 13.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = badgeText,
+                letterSpacing = 0.3.sp
             )
         }
-        
-        // Question Number
+
+        // ── Badge Nomor Soal (selalu /15)
         Box(
             modifier = Modifier
-                .height(42.dp)
-                .shadow(2.dp, RoundedCornerShape(21.dp))
-                .clip(RoundedCornerShape(21.dp))
-                .background(Color.White)
+                .height(36.dp)
+                .shadow(3.dp, badgeShape, spotColor = Color(0x307DD3FC))
+                .clip(badgeShape)
+                .background(badgeBg)
+                .border(1.5.dp, badgeBorder, badgeShape)
                 .padding(horizontal = 14.dp),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = "$questionNumber/$totalQuestions",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = QuizTextNavy
+                fontSize = 13.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = badgeText,
+                letterSpacing = 0.3.sp
             )
         }
 
-        // Score
+        // ── Badge Score (logika score tidak diubah)
         Box(
             modifier = Modifier
-                .height(42.dp)
-                .shadow(2.dp, RoundedCornerShape(21.dp))
-                .clip(RoundedCornerShape(21.dp))
-                .background(Color.White)
+                .height(36.dp)
+                .shadow(3.dp, badgeShape, spotColor = Color(0x307DD3FC))
+                .clip(badgeShape)
+                .background(badgeBg)
+                .border(1.5.dp, badgeBorder, badgeShape)
                 .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "🏆", fontSize = 16.sp)
-                Spacer(modifier = Modifier.width(4.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Text(
-                    text = "Score: $score",
+                    text = "🏆 Score: ", 
                     fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = QuizTextNavy,
+                    color = badgeText // Tambahkan ini
+                )
+                Text(
+                    text = "$score",
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = badgeText,
                     maxLines = 1,
                     softWrap = false,
                     overflow = TextOverflow.Visible
@@ -563,8 +572,6 @@ fun QuizOptionsGrid(
     onOptionSelected: (String) -> Unit
 ) {
     val isAnswered = feedbackType != FeedbackType.NONE
-    // Teks gelap (navy) saat tombol putih (belum dijawab), putih saat tombol berwarna (sudah dijawab)
-    val answerTextColor = if (isAnswered) Color.White else QuizTextNavy
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -580,8 +587,8 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt0 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt0 == selectedOption && opt0 != correctAnswer,
-                textColor = answerTextColor,
-                showBorder = !isAnswered,
+                textColor = Color.White,
+                showBorder = false,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt0) }
             )
@@ -594,8 +601,8 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt1 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt1 == selectedOption && opt1 != correctAnswer,
-                textColor = answerTextColor,
-                showBorder = !isAnswered,
+                textColor = Color.White,
+                showBorder = false,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt1) }
             )
@@ -614,8 +621,8 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt2 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt2 == selectedOption && opt2 != correctAnswer,
-                textColor = answerTextColor,
-                showBorder = !isAnswered,
+                textColor = Color.White,
+                showBorder = false,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt2) }
             )
@@ -628,8 +635,8 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt3 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt3 == selectedOption && opt3 != correctAnswer,
-                textColor = answerTextColor,
-                showBorder = !isAnswered,
+                textColor = Color.White,
+                showBorder = false,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt3) }
             )
@@ -646,8 +653,8 @@ private fun getOptionColors(
     isAnswered: Boolean,
     feedbackType: FeedbackType = FeedbackType.NONE
 ): Pair<Color, Color> {
-    // Default: tombol putih bersih sebelum dijawab
-    if (!isAnswered) return Pair(Color.White, Color(0xFFCBD5E1))
+    // Tombol warna-warni asli (Biru, Hijau, Kuning, Pink) sebelum dijawab
+    if (!isAnswered) return Pair(defaultBase, defaultDark)
 
     // Khusus Time's Up: Jawaban benar disorot hijau, opsi lainnya abu-abu netral
     if (feedbackType == FeedbackType.TIME_UP) {
@@ -1338,12 +1345,12 @@ fun TimesUpPopupBanner(
                         )
                     )
 
-                    // Badge "Answer: X" — gelap/hitam pill
+                    // Badge "Answer: X" — pink/rose pill harmonis dengan popup
                     Box(
                         modifier = Modifier
-                            .shadow(6.dp, RoundedCornerShape(50.dp), spotColor = Color(0x601E293B))
+                            .shadow(6.dp, RoundedCornerShape(50.dp), spotColor = Color(0x40E11D48))
                             .clip(RoundedCornerShape(50.dp))
-                            .background(Color(0xFF1E293B))
+                            .background(Color(0xFFF43F5E))
                             .padding(horizontal = 24.dp, vertical = 6.dp),
                         contentAlignment = Alignment.Center
                     ) {

@@ -1,4 +1,4 @@
-﻿package com.example.math_quiz.ui.screens
+package com.example.math_quiz.ui.screens
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -62,25 +62,17 @@ fun LevelSelectionScreen(
             modifier = Modifier.fillMaxSize()
         )
 
-        // Tombol Back (kiri atas) - kotak putih rounded sesuai mockup
-        Box(
+        // Tombol Back (kiri atas) menggunakan asset back.png asli yang pas di posisi tombol background
+        Image(
+            painter = painterResource(id = R.drawable.back),
+            contentDescription = "Back",
+            contentScale = ContentScale.Fit,
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 20.dp, top = 48.dp)
-                .size(48.dp)
-                .shadow(6.dp, RoundedCornerShape(14.dp))
-                .clip(RoundedCornerShape(14.dp))
-                .background(Color.White)
-                .clickable { onBackClick() },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "\u2190",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF1E293B)
-            )
-        }
+                .padding(start = 14.dp, top = 16.dp)
+                .size(46.dp)
+                .clickable { onBackClick() }
+        )
 
         // Konten utama: 3 tombol level ditumpuk vertikal di tengah layar
         Column(
