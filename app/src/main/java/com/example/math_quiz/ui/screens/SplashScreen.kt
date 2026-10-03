@@ -427,169 +427,17 @@ fun SplashScreen(
 
 /**
  * Maskot Karakter Buku Biru Lucu (Cute Book Mascot)
- * Dibuat murni dengan Jetpack Compose Canvas untuk performa tajam 60/120 FPS di semua resolusi.
+ * Menggunakan aset R.drawable.buku (buku.png)
  */
 @Composable
 fun CuteBookMascot(
     modifier: Modifier = Modifier
 ) {
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-
-        // 1. Bayangan Lembut di Bawah Buku
-        drawOval(
-            color = Color(0x22000000),
-            topLeft = Offset(w * 0.15f, h * 0.88f),
-            size = Size(w * 0.70f, h * 0.12f)
-        )
-
-        // 2. Lapisan Kertas Halaman Buku (Warna Cream / Putih Lembut)
-        val pagesPath = Path().apply {
-            moveTo(w * 0.22f, h * 0.72f)
-            lineTo(w * 0.82f, h * 0.72f)
-            quadraticBezierTo(w * 0.88f, h * 0.82f, w * 0.78f, h * 0.85f)
-            lineTo(w * 0.26f, h * 0.85f)
-            close()
-        }
-        drawPath(
-            path = pagesPath,
-            color = Color(0xFFFFFBEB)
-        )
-        drawPath(
-            path = pagesPath,
-            color = Color(0xFFE2E8F0),
-            style = Stroke(width = 3f)
-        )
-
-        // 3. Pita Pembatas Buku Kuning/Emas (Bookmark Ribbon)
-        val ribbonPath = Path().apply {
-            moveTo(w * 0.44f, h * 0.80f)
-            lineTo(w * 0.54f, h * 0.80f)
-            lineTo(w * 0.54f, h * 0.95f)
-            lineTo(w * 0.49f, h * 0.90f) // Bentuk lekukan ujung pita
-            lineTo(w * 0.44f, h * 0.95f)
-            close()
-        }
-        drawPath(
-            path = ribbonPath,
-            color = QuizYellow
-        )
-
-        // 4. Sampul Buku Biru (Main Book Cover) berbentuk Rounded Rectangle bergradasi
-        val coverWidth = w * 0.74f
-        val coverHeight = h * 0.72f
-        val coverLeft = w * 0.14f
-        val coverTop = h * 0.12f
-        val cornerRadius = 40f
-
-        // Gradien biru cerah 3D
-        drawRoundRect(
-            brush = Brush.verticalGradient(
-                colors = listOf(QuizBlueLight, QuizBlue, QuizBlueDark),
-                startY = coverTop,
-                endY = coverTop + coverHeight
-            ),
-            topLeft = Offset(coverLeft, coverTop),
-            size = Size(coverWidth, coverHeight),
-            cornerRadius = CornerRadius(cornerRadius, cornerRadius)
-        )
-
-        // Efek Kilau / Highlight di Sisi Kiri Sampul Buku
-        drawRoundRect(
-            color = Color.White.copy(alpha = 0.25f),
-            topLeft = Offset(coverLeft + 8f, coverTop + 8f),
-            size = Size(18f, coverHeight - 16f),
-            cornerRadius = CornerRadius(cornerRadius / 2, cornerRadius / 2)
-        )
-
-        // 5. Simbol Matematika Putih di 4 Sudut Wajah Buku
-        // Atas Kiri: Simbol "+"
-        drawMathSymbolPlus(
-            center = Offset(w * 0.32f, h * 0.28f),
-            size = 20f,
-            color = Color.White
-        )
-
-        // Atas Kanan: Simbol "-"
-        drawRoundRect(
-            color = Color.White,
-            topLeft = Offset(w * 0.65f, h * 0.27f),
-            size = Size(22f, 7f),
-            cornerRadius = CornerRadius(3.5f, 3.5f)
-        )
-
-        // Bawah Kiri: Simbol "×"
-        drawMathSymbolCross(
-            center = Offset(w * 0.34f, h * 0.66f),
-            size = 22f,
-            color = Color.White
-        )
-
-        // Bawah Kanan: Simbol "÷"
-        drawMathSymbolDivide(
-            center = Offset(w * 0.70f, h * 0.65f),
-            size = 22f,
-            color = Color.White
-        )
-
-        // 6. Wajah Kawaii Maskot di Tengah
-        // Mata Kiri (Besar, Hitam dengan pantulan cahaya putih)
-        val eyeRadius = 11f
-        drawCircle(
-            color = Color(0xFF1E293B),
-            radius = eyeRadius,
-            center = Offset(w * 0.44f, h * 0.46f)
-        )
-        // Pantulan Cahaya Mata Kiri
-        drawCircle(
-            color = Color.White,
-            radius = 3.5f,
-            center = Offset(w * 0.425f, h * 0.445f)
-        )
-
-        // Mata Kanan
-        drawCircle(
-            color = Color(0xFF1E293B),
-            radius = eyeRadius,
-            center = Offset(w * 0.60f, h * 0.46f)
-        )
-        // Pantulan Cahaya Mata Kanan
-        drawCircle(
-            color = Color.White,
-            radius = 3.5f,
-            center = Offset(w * 0.585f, h * 0.445f)
-        )
-
-        // Pipi Merona Merah Muda (Blushing Cheeks)
-        drawOval(
-            color = QuizPink.copy(alpha = 0.85f),
-            topLeft = Offset(w * 0.38f, h * 0.485f),
-            size = Size(18f, 10f)
-        )
-        drawOval(
-            color = QuizPink.copy(alpha = 0.85f),
-            topLeft = Offset(w * 0.62f, h * 0.485f),
-            size = Size(18f, 10f)
-        )
-
-        // Mulut Tersenyum Ceria (Cute Smile)
-        val mouthPath = Path().apply {
-            moveTo(w * 0.49f, h * 0.48f)
-            quadraticBezierTo(w * 0.52f, h * 0.54f, w * 0.55f, h * 0.48f)
-            close()
-        }
-        drawPath(
-            path = mouthPath,
-            color = Color(0xFF0F172A)
-        )
-        // Lidah merah kecil di mulut
-        drawCircle(
-            color = QuizPinkDark,
-            radius = 3f,
-            center = Offset(w * 0.52f, h * 0.51f)
-        )
-    }
+    androidx.compose.foundation.Image(
+        painter = androidx.compose.ui.res.painterResource(id = com.example.math_quiz.R.drawable.buku),
+        contentDescription = "Cute Book Mascot",
+        contentScale = androidx.compose.ui.layout.ContentScale.Fit,
+    )
 }
 
 // Helper untuk menggambar simbol Plus (+) pada Canvas

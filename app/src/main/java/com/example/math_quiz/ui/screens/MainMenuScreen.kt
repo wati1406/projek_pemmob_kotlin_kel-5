@@ -9,7 +9,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.Image
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,7 +52,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.math_quiz.R
@@ -96,6 +94,16 @@ fun MainMenuScreen(
             repeatMode = RepeatMode.Reverse
         ),
         label = "menuFloat2"
+    )
+
+    val floatOffset3 by infiniteTransition.animateFloat(
+        initialValue = -5f,
+        targetValue = 8f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1800, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "menuFloat3"
     )
 
     BoxWithConstraints(
@@ -165,7 +173,58 @@ fun MainMenuScreen(
                 .offset(y = floatOffset1.dp)
         )
 
-        // Dot aksen dekoratif
+        // Kiri Tengah: Angka "7" (Ungu)
+        Text(
+            text = "7",
+            fontSize = 40.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF7C3AED),
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 14.dp)
+                .offset(y = floatOffset3.dp)
+                .rotate(12f)
+        )
+
+        // Kanan Tengah: Simbol "×" (Pink)
+        Text(
+            text = "×",
+            fontSize = 42.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFFEC4899),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 14.dp)
+                .offset(y = floatOffset2.dp)
+                .rotate(-8f)
+        )
+
+        // Kiri Bawah: Simbol "−" (Biru)
+        Text(
+            text = "−",
+            fontSize = 44.sp,
+            fontWeight = FontWeight.Black,
+            color = QuizBlue.copy(alpha = 0.75f),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 18.dp, bottom = 260.dp)
+                .offset(y = floatOffset1.dp)
+        )
+
+        // Kanan Bawah: Angka "8" (Oranye)
+        Text(
+            text = "8",
+            fontSize = 38.sp,
+            fontWeight = FontWeight.Black,
+            color = QuizOrange.copy(alpha = 0.80f),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 280.dp)
+                .offset(y = floatOffset3.dp)
+                .rotate(10f)
+        )
+
+        // Dot aksen dekoratif - kiri atas
         Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
@@ -174,7 +233,25 @@ fun MainMenuScreen(
                 .background(QuizBlueLight.copy(alpha = 0.5f), CircleShape)
         )
 
-        // Dot aksen di bagian bawah
+        // Dot aksen - kiri atas kecil
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 60.dp, top = 110.dp)
+                .size(7.dp)
+                .background(QuizCoral.copy(alpha = 0.55f), CircleShape)
+        )
+
+        // Dot aksen - kanan atas
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 70.dp, top = 50.dp)
+                .size(9.dp)
+                .background(QuizYellow.copy(alpha = 0.65f), CircleShape)
+        )
+
+        // Dot aksen di bagian bawah kiri
         Box(
             modifier = Modifier
                 .align(Alignment.BottomStart)
@@ -183,12 +260,53 @@ fun MainMenuScreen(
                 .background(QuizBlueLight.copy(alpha = 0.4f), CircleShape)
         )
 
+        // Dot aksen bawah kiri tambahan
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 55.dp, bottom = 170.dp)
+                .size(8.dp)
+                .background(QuizGreen.copy(alpha = 0.5f), CircleShape)
+        )
+
         Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 38.dp, bottom = 100.dp)
+                .padding(end = 38.dp, bottom = 200.dp)
                 .size(14.dp)
                 .background(QuizBlueLight.copy(alpha = 0.5f), CircleShape)
+        )
+
+        // Dot aksen bawah kanan kecil
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 65.dp, bottom = 155.dp)
+                .size(7.dp)
+                .background(QuizCoral.copy(alpha = 0.6f), CircleShape)
+        )
+
+        // Kotak aksen pudar (mirip confetti) sesuai contoh
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(start = 24.dp, top = 220.dp)
+                .size(12.dp)
+                .background(Color(0xFF22C55E).copy(alpha = 0.35f), RoundedCornerShape(2.dp))
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(end = 20.dp, top = 180.dp)
+                .size(16.dp)
+                .background(Color(0xFF3B82F6).copy(alpha = 0.35f), RoundedCornerShape(2.dp))
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 40.dp, bottom = 40.dp)
+                .size(10.dp)
+                .background(Color(0xFFFB7185).copy(alpha = 0.45f), RoundedCornerShape(2.dp))
         )
 
         // 3. Konten Utama Layar
@@ -198,17 +316,17 @@ fun MainMenuScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(55.dp))
+            Spacer(modifier = Modifier.height(95.dp))
 
             // A. Bagian Maskot Buku dengan Radiant Halo & Percikan
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(200.dp)
+                    .size(240.dp) // Diperbesar
                     .offset(y = (floatOffset1 * 0.35f).dp)
             ) {
                 // Background Halo Kuning
-                Canvas(modifier = Modifier.size(175.dp)) {
+                Canvas(modifier = Modifier.size(210.dp)) {
                     drawCircle(
                         brush = Brush.radialGradient(
                             colors = listOf(
@@ -220,144 +338,187 @@ fun MainMenuScreen(
                     )
                 }
 
-                // Maskot Buku Cute
-                CuteBookMascot(
-                    modifier = Modifier.size(145.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            // B. Judul Aplikasi: "Math Quiz" dengan aksen percikan di samping
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                // Spark kiri (Dua pill kuning)
+                // Spark / percikan kuning di atas kanan kepala buku
                 Canvas(
                     modifier = Modifier
-                        .size(width = 12.dp, height = 18.dp)
-                        .rotate(-15f)
+                        .size(42.dp)
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-12).dp, y = 8.dp)
                 ) {
-                    // Pill pendek kiri
+                    val color = QuizYellow
                     drawRoundRect(
-                        color = QuizYellow,
-                        topLeft = Offset(0f, 6f),
-                        size = Size(4f, 10f),
-                        cornerRadius = CornerRadius(2f, 2f)
+                        color = color,
+                        topLeft = Offset(16f, 0f),
+                        size = Size(8f, 22f),
+                        cornerRadius = CornerRadius(4f, 4f)
                     )
-                    // Pill tinggi kanan
                     drawRoundRect(
-                        color = QuizYellow,
-                        topLeft = Offset(8f, 0f),
-                        size = Size(4f, 18f),
-                        cornerRadius = CornerRadius(2f, 2f)
+                        color = color,
+                        topLeft = Offset(0f, 18f),
+                        size = Size(22f, 8f),
+                        cornerRadius = CornerRadius(4f, 4f)
                     )
                 }
-                Spacer(modifier = Modifier.width(10.dp))
 
-                Text(
-                    text = "Math",
-                    fontSize = 44.sp,
-                    fontWeight = FontWeight.Black,
-                    color = QuizBlue,
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .shadow(3.dp, CircleShape, spotColor = QuizBlueDark.copy(alpha = 0.35f))
-                )
-
-                Text(
-                    text = "Quiz",
-                    fontSize = 44.sp,
-                    fontWeight = FontWeight.Black,
-                    color = QuizOrange,
-                    modifier = Modifier.shadow(
-                        3.dp,
-                        CircleShape,
-                        spotColor = QuizOrangeDark.copy(alpha = 0.35f)
-                    )
-                )
-
-                // Dot kanan
-                Box(
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .size(8.dp)
-                        .background(QuizBlueLight, CircleShape)
+                // Maskot Buku Cute dari Drawable `buku.png`
+                Image(
+                    painter = painterResource(id = R.drawable.buku),
+                    contentDescription = "Math Quiz Mascot",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.size(190.dp) // Diperbesar
                 )
             }
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(0.dp)) // Jarak didekatkan
+
+            // B. Judul Aplikasi: "Math Quiz" Melengkung Halus dengan Outline & Shadow Stiker
+            Row(
+                verticalAlignment = Alignment.Bottom, // Align bawah agar arch natural
+                horizontalArrangement = Arrangement.Center
+            ) {
+                // Spark kiri
+                Canvas(modifier = Modifier.size(width = 12.dp, height = 18.dp).rotate(-15f).offset(y = (-10).dp)) {
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(0f, 6f), size = Size(4f, 10f), cornerRadius = CornerRadius(2f, 2f))
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(8f, 0f), size = Size(4f, 18f), cornerRadius = CornerRadius(2f, 2f))
+                }
+                Spacer(modifier = Modifier.width(6.dp))
+
+                val title = "Math Quiz"
+                val middle = (title.length - 1) / 2f
+                
+                title.forEachIndexed { index, char ->
+                    if (char == ' ') {
+                        Spacer(modifier = Modifier.width(4.dp)) // Jarak antar kata didekatkan
+                    } else {
+                        val isMath = index < 4
+                        val color = if (isMath) QuizBlue else QuizOrange
+                        val diff = index - middle
+                        val angle = diff * 1.5f // Lengkungan dikurangi jauh
+                        val yOffset = (diff * diff * 0.4f).dp // Parabola dikurangi jauh
+                        
+                        val outlineWidth = 16f
+                        
+                        Box(
+                            modifier = Modifier
+                                .offset(y = yOffset)
+                                .rotate(angle),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            // 1. Drop Shadow (Stroke tebal di-offset)
+                            Text(
+                                text = char.toString(),
+                                fontSize = 54.sp,
+                                fontWeight = FontWeight.Black,
+                                color = Color.Black.copy(alpha = 0.15f),
+                                style = androidx.compose.ui.text.TextStyle(
+                                    drawStyle = Stroke(
+                                        width = outlineWidth,
+                                        join = androidx.compose.ui.graphics.StrokeJoin.Round
+                                    )
+                                ),
+                                modifier = Modifier.offset(x = 0.dp, y = 6.dp)
+                            )
+                            // 2. Outline Putih Tebal
+                            Text(
+                                text = char.toString(),
+                                fontSize = 54.sp,
+                                fontWeight = FontWeight.Black,
+                                color = Color.White,
+                                style = androidx.compose.ui.text.TextStyle(
+                                    drawStyle = Stroke(
+                                        width = outlineWidth,
+                                        join = androidx.compose.ui.graphics.StrokeJoin.Round
+                                    )
+                                )
+                            )
+                            // 3. Teks Utama (Isi warna)
+                            Text(
+                                text = char.toString(),
+                                fontSize = 54.sp,
+                                fontWeight = FontWeight.Black,
+                                color = color
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(6.dp))
+                // Spark kanan
+                Canvas(modifier = Modifier.size(width = 12.dp, height = 18.dp).rotate(15f).offset(y = (-10).dp)) {
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(8f, 6f), size = Size(4f, 10f), cornerRadius = CornerRadius(2f, 2f))
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(0f, 0f), size = Size(4f, 18f), cornerRadius = CornerRadius(2f, 2f))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(2.dp)) // Didekatkan
 
             // C. Tagline: "Test your math skills!"
             Text(
                 text = "Test your math skills!",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
+                fontSize = 21.sp, // Diperbesar
+                fontWeight = FontWeight.Black,
                 color = QuizTextDark.copy(alpha = 0.85f),
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(42.dp))
+            Spacer(modifier = Modifier.height(12.dp)) // Didekatkan
 
             // D. Tombol Besar: "PLAY" 
             PrimaryButton(
                 text = "PLAY",
-                imageResId = null,
+                imageResId = R.drawable.btn_play,
                 onClick = onPlayClick,
-                height = 64.dp,
-                fontSize = 24.sp,
-                modifier = Modifier.fillMaxWidth(0.55f)
+                height = 100.dp, // Diperbesar
+                modifier = Modifier.fillMaxWidth(0.92f) // Diperlebar
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(8.dp)) // Didekatkan ke row bawah
 
             // E. Dua Tombol Sejajar: "HIGH SCORE" & "SETTINGS"
+            // Rasio asli: btn_high_score=2.89, btn_settings=2.76 → pakai 2.83 agar keduanya identik
             Row(
-                modifier = Modifier.fillMaxWidth(0.9f),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth(0.88f),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Tombol HIGH SCORE
                 MenuAssetButton(
                     imageResId = R.drawable.btn_high_score,
                     contentDescription = "HIGH SCORE",
                     onClick = onHighScoreClick,
-                    height = 70.dp,
-                    modifier = Modifier.weight(1.05f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(2.83f)
                 )
-
-                // Tombol SETTINGS
                 MenuAssetButton(
                     imageResId = R.drawable.btn_settings,
                     contentDescription = "SETTINGS",
                     onClick = onSettingsClick,
-                    height = 70.dp,
-                    modifier = Modifier.weight(0.95f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(2.83f)
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // F. Indikator Level Saat Ini di Bagian Bawah
-            LevelIndicatorBadge(
-                level = currentLevel,
-                modifier = Modifier.padding(bottom = 36.dp)
-            )
+            // F. Elemen Dekoratif Bawah — Angka dan Operator Matematika
+            ScatteredMathDecor()
+
+            Spacer(modifier = Modifier.height(30.dp))
         }
     }
 }
 
 /**
- * Tombol interaktif berbasis file aset 3D asli dengan animasi tactile press
+ * Tombol interaktif berbasis file aset 3D asli dengan animasi tactile press.
+ * Ukuran dikontrol sepenuhnya dari luar melalui modifier (weight + height).
  */
 @Composable
 private fun MenuAssetButton(
     imageResId: Int,
     contentDescription: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    height: Dp = 60.dp
+    modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -381,90 +542,84 @@ private fun MenuAssetButton(
         Image(
             painter = painterResource(id = imageResId),
             contentDescription = contentDescription,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(height)
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
 
 /**
- * Indikator Level Saat Ini: [—] [ 📶 Level X ] [—]
+ * Dekorasi bawah berupa angka dan simbol matematika yang tersebar,
+ * sesuai request agar kelihatan ramai dengan matematika.
  */
 @Composable
-private fun LevelIndicatorBadge(
-    level: Int,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(14.dp)
+private fun ScatteredMathDecor() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(190.dp) // Ketinggian ditambah agar elemen bawah bisa turun mengisi kekosongan
+            .padding(horizontal = 16.dp)
     ) {
-        // Garis aksen kiri
-        Box(
-            modifier = Modifier
-                .width(26.dp)
-                .height(4.dp)
-                .background(Color(0xFFCBD5E1), RoundedCornerShape(2.dp))
+        // Angka 3 besar biru di kiri atas + Dot pink
+        Text(
+            text = "3",
+            fontSize = 56.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF3B82F6).copy(alpha = 0.9f),
+            modifier = Modifier.align(Alignment.TopStart).offset(x = 20.dp, y = (-5).dp).rotate(-8f)
+        )
+        Box(modifier = Modifier.align(Alignment.TopStart).offset(x = 65.dp, y = 45.dp).size(8.dp).background(Color(0xFFFB7185).copy(alpha = 0.6f), CircleShape))
+
+        // Simbol Plus (+) merah di bawah kiri + Kotak hijau kecil
+        Text(
+            text = "+",
+            fontSize = 52.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFFFB7185).copy(alpha = 0.9f),
+            modifier = Modifier.align(Alignment.BottomStart).offset(x = 40.dp, y = 5.dp).rotate(15f)
+        )
+        Box(modifier = Modifier.align(Alignment.BottomStart).offset(x = 30.dp, y = 20.dp).size(12.dp).background(Color(0xFF22C55E).copy(alpha = 0.5f)))
+
+        // Simbol Bagi (÷) cyan di tengah atas (bertukar posisi dengan 7)
+        Text(
+            text = "÷",
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF06B6D4).copy(alpha = 0.85f),
+            modifier = Modifier.align(Alignment.TopCenter).offset(x = (-10).dp, y = 15.dp).rotate(-15f)
         )
 
-        // Kartu Badge Level Pill
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .shadow(4.dp, CircleShape, spotColor = Color(0x1A000000))
-                .clip(CircleShape)
-                .background(Color.White)
-                .border(1.5.dp, Color(0xFFE2E8F0), CircleShape)
-                .padding(horizontal = 18.dp, vertical = 8.dp)
-        ) {
-            // Ikon Bar Signal Hijau (3 batang bertingkat)
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(2.5.dp),
-                verticalAlignment = Alignment.Bottom,
-                modifier = Modifier.height(14.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(4.dp)
-                        .height(6.dp)
-                        .background(QuizGreen, RoundedCornerShape(2.dp))
-                )
-                Box(
-                    modifier = Modifier
-                        .width(4.dp)
-                        .height(10.dp)
-                        .background(QuizGreen, RoundedCornerShape(2.dp))
-                )
-                Box(
-                    modifier = Modifier
-                        .width(4.dp)
-                        .height(14.dp)
-                        .background(QuizGreen, RoundedCornerShape(2.dp))
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                text = "Level $level",
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF475569)
-            )
-        }
-
-        // Garis aksen kanan
-        Box(
-            modifier = Modifier
-                .width(26.dp)
-                .height(4.dp)
-                .background(Color(0xFFCBD5E1), RoundedCornerShape(2.dp))
+        // Angka 7 ungu di tengah bawah (bertukar posisi dengan ÷)
+        Text(
+            text = "7",
+            fontSize = 44.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF7C3AED).copy(alpha = 0.8f),
+            modifier = Modifier.align(Alignment.BottomCenter).offset(x = 15.dp, y = 10.dp).rotate(20f)
         )
+
+        // Angka 9 hijau di kanan atas (diturunkan sedikit)
+        Text(
+            text = "9",
+            fontSize = 48.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF22C55E).copy(alpha = 0.85f),
+            modifier = Modifier.align(Alignment.TopEnd).offset(x = (-30).dp, y = 40.dp).rotate(-5f)
+        )
+
+        // Simbol Kali (×) kuning/orange di kanan bawah (dipindah sangat ke bawah) + Dot biru
+        Text(
+            text = "×",
+            fontSize = 52.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFFFFD026).copy(alpha = 0.9f),
+            modifier = Modifier.align(Alignment.BottomEnd).offset(x = (-50).dp, y = 15.dp).rotate(10f)
+        )
+        Box(modifier = Modifier.align(Alignment.BottomEnd).offset(x = (-20).dp, y = 30.dp).size(10.dp).background(Color(0xFF3B82F6).copy(alpha = 0.6f), CircleShape))
     }
 }
+
+
 
 @Preview(showBackground = true, widthDp = 390, heightDp = 844)
 @Composable
