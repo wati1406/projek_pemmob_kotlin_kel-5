@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -152,10 +151,10 @@ fun SplashScreen(
             content = {
                 Text(
                     text = "1",
+                    fontFamily = FredokaFontFamily,
                     fontSize = 58.sp,
                     fontWeight = FontWeight.Black,
-                    color = QuizCoral,
-                    style = MaterialTheme.typography.displayLarge
+                    color = QuizCoral
                 )
             }
         )
@@ -170,6 +169,7 @@ fun SplashScreen(
             content = {
                 Text(
                     text = "+",
+                    fontFamily = FredokaFontFamily,
                     fontSize = 52.sp,
                     fontWeight = FontWeight.Black,
                     color = QuizBlueLight
@@ -186,6 +186,7 @@ fun SplashScreen(
             content = {
                 Text(
                     text = "+",
+                    fontFamily = FredokaFontFamily,
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Black,
                     color = QuizYellow
@@ -203,6 +204,7 @@ fun SplashScreen(
             content = {
                 Text(
                     text = "2",
+                    fontFamily = FredokaFontFamily,
                     fontSize = 56.sp,
                     fontWeight = FontWeight.Black,
                     color = QuizGreen
@@ -250,6 +252,7 @@ fun SplashScreen(
             content = {
                 Text(
                     text = "+",
+                    fontFamily = FredokaFontFamily,
                     fontSize = 30.sp,
                     fontWeight = FontWeight.Black,
                     color = QuizYellow.copy(alpha = 0.85f)
@@ -298,6 +301,7 @@ fun SplashScreen(
             content = {
                 Text(
                     text = "3",
+                    fontFamily = FredokaFontFamily,
                     fontSize = 62.sp,
                     fontWeight = FontWeight.Black,
                     color = QuizPurple
@@ -407,6 +411,7 @@ fun SplashScreen(
                             // 1. Drop Shadow (Stroke tebal di-offset)
                             Text(
                                 text = char.toString(),
+                                fontFamily = FredokaFontFamily,
                                 fontSize = 54.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color.Black.copy(alpha = 0.15f),
@@ -421,6 +426,7 @@ fun SplashScreen(
                             // 2. Outline Putih Tebal
                             Text(
                                 text = char.toString(),
+                                fontFamily = FredokaFontFamily,
                                 fontSize = 54.sp,
                                 fontWeight = FontWeight.Black,
                                 color = Color.White,
@@ -434,6 +440,7 @@ fun SplashScreen(
                             // 3. Teks Utama (Isi warna)
                             Text(
                                 text = char.toString(),
+                                fontFamily = FredokaFontFamily,
                                 fontSize = 54.sp,
                                 fontWeight = FontWeight.Black,
                                 color = color
@@ -455,6 +462,7 @@ fun SplashScreen(
             // Tagline: "Test your math skills!" (Samakan dengan Main Menu)
             Text(
                 text = "Test your math skills!",
+                fontFamily = FredokaFontFamily,
                 fontSize = 21.sp,
                 fontWeight = FontWeight.Black,
                 color = QuizTextDark.copy(alpha = 0.85f),
