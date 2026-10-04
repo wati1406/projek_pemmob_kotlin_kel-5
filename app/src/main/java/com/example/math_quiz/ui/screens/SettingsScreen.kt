@@ -52,6 +52,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import com.example.math_quiz.R
+import com.example.math_quiz.audio.SoundManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,23 +65,19 @@ import com.example.math_quiz.ui.theme.*
  * - Tombol back kiri atas
  * - Judul "Settings"
  * - Maskot buku + "Customize your quiz experience"
- * - Row item: Sound Effects (toggle), Music (toggle), Language (dropdown), About (arrow)
+ * - Row item: Sound Effects (toggle), Music (toggle), About (arrow)
  * - Footer "Make Math More Fun!"
  */
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onAboutClick: () -> Unit = {}
+    onAboutClick: () -> Unit = {},
+    soundEffectsEnabled: Boolean = SoundManager.isSoundEffectsEnabled,
+    onSoundEffectsChange: (Boolean) -> Unit = { SoundManager.setSoundEffectsEnabled(it) },
+    musicEnabled: Boolean = SoundManager.isMusicEnabled,
+    onMusicChange: (Boolean) -> Unit = { SoundManager.setMusicEnabled(it) }
 ) {
-    // State untuk toggle dan bahasa
-    var soundEffectsEnabled by remember { mutableStateOf(true) }
-    var musicEnabled by remember { mutableStateOf(true) }
-    var selectedLanguage by remember { mutableStateOf("English") }
-    var showLanguageMenu by remember { mutableStateOf(false) }
-
-    val languages = listOf("English", "Indonesia", "Espanol", "Francais")
-
     // Animasi mengambang
     val infiniteTransition = rememberInfiniteTransition(label = "settingsFloating")
 
@@ -282,7 +279,12 @@ fun SettingsScreen(
                 }
                 Switch(
                     checked = soundEffectsEnabled,
-                    onCheckedChange = { soundEffectsEnabled = it },
+                    onCheckedChange = { isChecked ->
+                        onSoundEffectsChange(isChecked)
+                        if (isChecked) {
+                            SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                        }
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = QuizGreen,
@@ -292,7 +294,7 @@ fun SettingsScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // 2. Music
             SettingsCard {
@@ -313,7 +315,7 @@ fun SettingsScreen(
                 }
                 Switch(
                     checked = musicEnabled,
-                    onCheckedChange = { musicEnabled = it },
+                    onCheckedChange = onMusicChange,
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = Color.White,
                         checkedTrackColor = QuizGreen,
@@ -323,83 +325,9 @@ fun SettingsScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // 3. Language
-            Box {
-                SettingsCard {
-                    SettingsIconBox(backgroundColor = Color(0xFFDBEAFE), emoji = "\uD83C\uDF10")
-                    Spacer(modifier = Modifier.width(14.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = "Language",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = QuizTextNavy
-                        )
-                        Text(
-                            text = "Choose your language",
-                            fontSize = 12.sp,
-                            color = QuizTextMuted
-                        )
-                    }
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFFF1F5F9))
-                            .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(20.dp))
-                            .clickable { showLanguageMenu = !showLanguageMenu }
-                            .padding(horizontal = 14.dp, vertical = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = selectedLanguage,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = QuizTextNavy
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = "\u25BE", fontSize = 11.sp, color = QuizTextMuted)
-                        }
-                    }
-                }
-                if (showLanguageMenu) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .offset(y = 60.dp)
-                            .shadow(8.dp, RoundedCornerShape(12.dp))
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color.White)
-                            .border(1.dp, Color(0xFFE2E8F0), RoundedCornerShape(12.dp))
-                            .padding(vertical = 6.dp)
-                            .width(140.dp)
-                    ) {
-                        Column {
-                            languages.forEach { lang ->
-                                Text(
-                                    text = lang,
-                                    fontSize = 14.sp,
-                                    fontWeight = if (lang == selectedLanguage) FontWeight.Bold else FontWeight.Normal,
-                                    color = if (lang == selectedLanguage) QuizBlue else QuizTextNavy,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            selectedLanguage = lang
-                                            showLanguageMenu = false
-                                        }
-                                        .padding(horizontal = 16.dp, vertical = 10.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // 4. About
+            // 3. About
             SettingsCard(onClick = onAboutClick) {
                 SettingsIconBox(backgroundColor = Color(0xFFFEF9C3), emoji = "\u2139\uFE0F")
                 Spacer(modifier = Modifier.width(14.dp))

@@ -82,6 +82,7 @@ fun QuizScreen(
     onOptionSelected: (String) -> Unit = {},
     onCorrectAnswer: () -> Unit = {},
     onWrongAnswer: () -> Unit = {},
+    onTimeUp: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onQuizCompleted: (Int) -> Unit = {}
 ) {
@@ -144,6 +145,7 @@ fun QuizScreen(
             // Pengguna harus menekan tombol NEXT untuk melanjutkan.
             if (timeLeft == 0 && feedbackType == FeedbackType.NONE) {
                 feedbackType = FeedbackType.TIME_UP
+                onTimeUp()
             }
         }
     }

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.math_quiz.audio.SoundManager
+import com.example.math_quiz.ui.screens.AboutScreen
 import com.example.math_quiz.ui.screens.LevelSelectionScreen
 import com.example.math_quiz.ui.screens.MainMenuScreen
 import com.example.math_quiz.ui.screens.SettingsScreen
@@ -79,6 +80,21 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onAboutClick = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "ABOUT"
+                                },
+                                soundEffectsEnabled = SoundManager.isSoundEffectsEnabled,
+                                onSoundEffectsChange = { SoundManager.setSoundEffectsEnabled(it) },
+                                musicEnabled = SoundManager.isMusicEnabled,
+                                onMusicChange = { SoundManager.setMusicEnabled(it) }
+                            )
+                        }
+
+                        "ABOUT" -> {
+                            AboutScreen(
+                                modifier = Modifier.padding(innerPadding),
+                                onBackClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "SETTINGS"
                                 }
                             )
                         }
@@ -122,6 +138,9 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onWrongAnswer = {
                                     SoundManager.playSfx(SoundManager.SFX.INCORRECT)
+                                },
+                                onTimeUp = {
+                                    SoundManager.playSfx(SoundManager.SFX.TIME_UP)
                                 },
                                 onNextClick = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
