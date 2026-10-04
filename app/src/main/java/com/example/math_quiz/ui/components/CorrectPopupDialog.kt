@@ -101,13 +101,6 @@ fun CorrectPopupContent(
             .graphicsLayer { scaleX = popScale.value; scaleY = popScale.value },
         contentAlignment = Alignment.Center
     ) {
-        // Percikan hijau animatif di kiri & kanan
-        GreenSparksDecoration(
-            modifier = Modifier
-                .width(320.dp)
-                .height(130.dp)
-        )
-
         // Kapsul hijau lembut — struktur identik dengan Incorrect
         Box(
             modifier = Modifier

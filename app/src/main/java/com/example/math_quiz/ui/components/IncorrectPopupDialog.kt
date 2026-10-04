@@ -116,13 +116,6 @@ fun IncorrectPopupContent(
             },
         contentAlignment = Alignment.Center
     ) {
-        // Percikan sparks pink di kiri & kanan
-        PinkSparksDecoration(
-            modifier = Modifier
-                .width(320.dp)
-                .height(130.dp)
-        )
-
         // Banner Utama Pink Soft
         Box(
             modifier = Modifier

@@ -161,7 +161,7 @@ fun QuizScreen(
             .fillMaxSize()
             .background(QuizBgLight)
     ) {
-        // Decorative background elements (bottom shapes)
+        // Decorative background elements (bottom shapes & blobs)
         QuizBackgroundDecorations()
 
         Column(
@@ -205,14 +205,13 @@ fun QuizScreen(
                     feedbackType = feedbackType
                 )
 
-                // Confetti Sparkles di sekitar card saat CORRECT
+                // Popup CORRECT: hanya ada popup saja tanpa elemen confetti/melayang
                 if (feedbackType == FeedbackType.CORRECT) {
-                    CorrectConfettiSparkles(
-                        modifier = Modifier.matchParentSize()
-                    )
                     CorrectPopupContent(
                         pointsEarned = 10,
-                        modifier = Modifier.align(Alignment.BottomCenter)
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 14.dp)
                     )
                 }
 
@@ -571,12 +570,16 @@ fun QuizQuestionCard(
             }
         }
 
-        // 5. Teks Soal Utama: Tepat di Tengah (Center), Opacity 100% Solid
+        // 5. Teks Soal Utama: Tepat di Tengah (Center), naik sedikit saat CORRECT agar muat bersama pop-up
         Box(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp),
+                .padding(horizontal = 24.dp)
+                .then(
+                    if (feedbackType == FeedbackType.CORRECT) Modifier.offset(y = (-36).dp)
+                    else Modifier
+                ),
             contentAlignment = Alignment.Center
         ) {
             val dynamicFontSize = when {
@@ -627,7 +630,7 @@ fun QuizOptionsGrid(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             val opt0 = options[0]
-            val (btnColor0, shadowColor0) = getOptionColors(opt0, QuizBlue, QuizBlueDark, selectedOption, correctAnswer, isAnswered, feedbackType)
+            val (btnColor0, shadowColor0) = getOptionColors(opt0, selectedOption, correctAnswer, isAnswered, feedbackType)
             QuizOptionButton(
                 text = opt0,
                 buttonColor = btnColor0,
@@ -635,13 +638,13 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt0 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt0 == selectedOption && opt0 != correctAnswer,
-                textColor = Color.White,
-                showBorder = false,
+                textColor = if (btnColor0 == Color.White) QuizTextDark else Color.White,
+                showBorder = btnColor0 == Color.White,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt0) }
             )
             val opt1 = options[1]
-            val (btnColor1, shadowColor1) = getOptionColors(opt1, QuizGreen, QuizGreenDark, selectedOption, correctAnswer, isAnswered, feedbackType)
+            val (btnColor1, shadowColor1) = getOptionColors(opt1, selectedOption, correctAnswer, isAnswered, feedbackType)
             QuizOptionButton(
                 text = opt1,
                 buttonColor = btnColor1,
@@ -649,8 +652,8 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt1 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt1 == selectedOption && opt1 != correctAnswer,
-                textColor = Color.White,
-                showBorder = false,
+                textColor = if (btnColor1 == Color.White) QuizTextDark else Color.White,
+                showBorder = btnColor1 == Color.White,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt1) }
             )
@@ -661,7 +664,7 @@ fun QuizOptionsGrid(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             val opt2 = options[2]
-            val (btnColor2, shadowColor2) = getOptionColors(opt2, QuizYellow, QuizYellowDark, selectedOption, correctAnswer, isAnswered, feedbackType)
+            val (btnColor2, shadowColor2) = getOptionColors(opt2, selectedOption, correctAnswer, isAnswered, feedbackType)
             QuizOptionButton(
                 text = opt2,
                 buttonColor = btnColor2,
@@ -669,13 +672,13 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt2 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt2 == selectedOption && opt2 != correctAnswer,
-                textColor = Color.White,
-                showBorder = false,
+                textColor = if (btnColor2 == Color.White) QuizTextDark else Color.White,
+                showBorder = btnColor2 == Color.White,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt2) }
             )
             val opt3 = options[3]
-            val (btnColor3, shadowColor3) = getOptionColors(opt3, QuizPink, QuizPinkDark, selectedOption, correctAnswer, isAnswered, feedbackType)
+            val (btnColor3, shadowColor3) = getOptionColors(opt3, selectedOption, correctAnswer, isAnswered, feedbackType)
             QuizOptionButton(
                 text = opt3,
                 buttonColor = btnColor3,
@@ -683,8 +686,8 @@ fun QuizOptionsGrid(
                 enabled = !isAnswered,
                 isCorrect = isAnswered && opt3 == correctAnswer,
                 isWrong = feedbackType == FeedbackType.INCORRECT && opt3 == selectedOption && opt3 != correctAnswer,
-                textColor = Color.White,
-                showBorder = false,
+                textColor = if (btnColor3 == Color.White) QuizTextDark else Color.White,
+                showBorder = btnColor3 == Color.White,
                 modifier = Modifier.weight(1f),
                 onClick = { onOptionSelected(opt3) }
             )
@@ -694,15 +697,13 @@ fun QuizOptionsGrid(
 
 private fun getOptionColors(
     option: String,
-    defaultBase: Color,
-    defaultDark: Color,
     selectedOption: String?,
     correctAnswer: String?,
     isAnswered: Boolean,
     feedbackType: FeedbackType = FeedbackType.NONE
 ): Pair<Color, Color> {
-    // Tombol warna-warni asli (Biru, Hijau, Kuning, Pink) sebelum dijawab
-    if (!isAnswered) return Pair(defaultBase, defaultDark)
+    // Tombol berwarna putih glossy sebelum dijawab
+    if (!isAnswered) return Pair(Color.White, Color(0xFFCBD5E1))
 
     // Khusus Time's Up: Jawaban benar disorot hijau, opsi lainnya abu-abu netral
     if (feedbackType == FeedbackType.TIME_UP) {
@@ -870,6 +871,7 @@ fun QuizOptionButton(
         Text(
             text = text,
             color = textColor,
+            fontFamily = FredokaFontFamily,
             fontSize = 44.sp,
             fontWeight = FontWeight.Black,
             textAlign = TextAlign.Center,
