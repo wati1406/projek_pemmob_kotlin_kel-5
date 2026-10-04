@@ -56,7 +56,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.activity.compose.BackHandler
 import com.example.math_quiz.R
+import com.example.math_quiz.audio.SoundManager
+import com.example.math_quiz.ui.components.PausePopup
 import com.example.math_quiz.data.QuizRepository
 import com.example.math_quiz.ui.components.PrimaryButton
 import com.example.math_quiz.ui.components.IncorrectPopupContent
@@ -92,7 +95,11 @@ fun QuizScreen(
     }
 
     // Dynamic State
-    val questions = remember(level) { QuizRepository.getQuestionsByLevel(level) }
+    // State pause & restart
+    var isPaused by remember { mutableStateOf(false) }
+    var restartKey by remember { mutableIntStateOf(0) }
+
+    val questions = remember(level, restartKey) { QuizRepository.getQuestionsByLevel(level) }
     var currentIndex by remember { mutableIntStateOf(0) }
     val currentQuestion = questions.getOrElse(currentIndex) { questions.first() }
 
@@ -103,11 +110,11 @@ fun QuizScreen(
     var score by remember { mutableIntStateOf(0) }
 
     // State jawaban dan feedback
-    var selectedOption by remember(currentIndex) { mutableStateOf<String?>(null) }
-    var feedbackType by remember(currentIndex) { mutableStateOf(FeedbackType.NONE) }
+    var selectedOption by remember(currentIndex, restartKey) { mutableStateOf<String?>(null) }
+    var feedbackType by remember(currentIndex, restartKey) { mutableStateOf(FeedbackType.NONE) }
 
     // Timer state per soal (di-reset otomatis setiap kali currentIndex berubah)
-    var timeLeft by remember(currentIndex) { mutableIntStateOf(totalDuration) }
+    var timeLeft by remember(currentIndex, restartKey) { mutableIntStateOf(totalDuration) }
     val options = currentQuestion.options
 
     val scrollState = rememberScrollState()
@@ -124,9 +131,9 @@ fun QuizScreen(
     // Coroutine timer countdown real-time:
     // Hanya berjalan saat feedbackType == NONE (belum dijawab dan belum time up).
     // Berhenti otomatis saat pengguna menjawab (CORRECT/INCORRECT) atau waktu habis (TIME_UP).
-    LaunchedEffect(currentIndex, feedbackType) {
-        if (feedbackType == FeedbackType.NONE) {
-            timeLeft = totalDuration
+    // Timer juga berhenti saat popup pause tampil, dan lanjut dari sisa waktu saat Resume.
+    LaunchedEffect(currentIndex, feedbackType, isPaused, restartKey) {
+        if (feedbackType == FeedbackType.NONE && !isPaused) {
             while (timeLeft > 0 && feedbackType == FeedbackType.NONE) {
                 delay(1000L)
                 if (feedbackType == FeedbackType.NONE) {
@@ -139,6 +146,12 @@ fun QuizScreen(
                 feedbackType = FeedbackType.TIME_UP
             }
         }
+    }
+
+    // Tombol back sistem: buka pause, atau tutup pause jika sedang tampil
+    BackHandler {
+        SoundManager.playSfx(SoundManager.SFX.BUTTON)
+        isPaused = !isPaused
     }
 
     Box(
@@ -163,7 +176,10 @@ fun QuizScreen(
                 questionNumber = questionNumber,
                 totalQuestions = totalQuestions,
                 score = score,
-                onBackClick = onBackClick
+                onBackClick = {
+                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                    isPaused = true
+                }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -255,6 +271,28 @@ fun QuizScreen(
                 )
                 Spacer(modifier = Modifier.height(32.dp))
             }
+        }
+
+        // Popup Pause
+        if (isPaused) {
+            PausePopup(
+                score = score,
+                onResume = {
+                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                    isPaused = false
+                },
+                onRestart = {
+                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                    currentIndex = 0
+                    score = 0
+                    restartKey++
+                    isPaused = false
+                },
+                onExit = {
+                    isPaused = false
+                    onBackClick()
+                }
+            )
         }
     }
 }
