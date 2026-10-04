@@ -1,7 +1,10 @@
 package com.example.math_quiz.ui.screens
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -9,20 +12,81 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import com.example.math_quiz.R
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.math_quiz.ui.components.AnswerOptionButton
-import com.example.math_quiz.ui.components.PrimaryButton
+import com.example.math_quiz.ui.components.CorrectPopupContent
+import com.example.math_quiz.ui.components.IncorrectPopupContent
 
+// ── Tombol Back tanpa painterResource (aman untuk Preview & Runtime) ──────────
+@Composable
+private fun BackButton(onClick: () -> Unit = {}) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
+        modifier = Modifier
+            .size(44.dp)
+            .clip(CircleShape)
+            .background(Color(0xFF7DD3FC))
+            .border(2.dp, Color(0xFF3B82F6), CircleShape)
+            .clickable(interactionSource = interactionSource, indication = null) { onClick() },
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(modifier = Modifier.size(20.dp)) {
+            val strokeWidth = 4.dp.toPx()
+            val mid = size.height / 2f
+            val arrowX = size.width * 0.55f
+            val tailX = size.width * 0.15f
+            // Shaft ←
+            drawLine(
+                color = Color.White,
+                start = Offset(arrowX, mid),
+                end = Offset(tailX, mid),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+            // Arrow head top-left
+            drawLine(
+                color = Color.White,
+                start = Offset(tailX, mid),
+                end = Offset(tailX + size.width * 0.25f, mid - size.height * 0.28f),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+            // Arrow head bottom-left
+            drawLine(
+                color = Color.White,
+                start = Offset(tailX, mid),
+                end = Offset(tailX + size.width * 0.25f, mid + size.height * 0.28f),
+                strokeWidth = strokeWidth,
+                cap = StrokeCap.Round
+            )
+        }
+    }
+}
+
+// ── Badge kapsul kecil (Level / Nomor soal) ───────────────────────────────────
+@Composable
+private fun CapsuleBadge(text: String) {
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .background(Color(0xFFDBEAFE))
+            .padding(horizontal = 14.dp, vertical = 6.dp)
+    ) {
+        Text(text, fontSize = 14.sp, fontWeight = FontWeight.Black, color = Color(0xFF1E3A8A))
+    }
+}
+
+// ── Layar Quiz saat jawaban BENAR ─────────────────────────────────────────────
 @Composable
 fun QuizScreenCorrectState(
     onNextQuestion: () -> Unit = {}
@@ -30,33 +94,25 @@ fun QuizScreenCorrectState(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFE0F2FE)) // Sky blue background
+            .background(Color(0xFFE0F2FE))
             .padding(horizontal = 20.dp)
             .padding(top = 20.dp, bottom = 24.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 1. TOP BAR (Level, 3/10, Score)
+        // 1. TOP BAR
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Back Button menggunakan asset back.png asli
-            Image(
-                painter = painterResource(id = R.drawable.back),
-                contentDescription = "Back",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.size(44.dp)
-            )
+            BackButton()
 
-            // Pills Info
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 CapsuleBadge(text = "Level 3")
                 CapsuleBadge(text = "3/10")
             }
 
-            // Score Badge
             Column(horizontalAlignment = Alignment.End) {
                 Text("🏆 Score: 130", fontSize = 14.sp, fontWeight = FontWeight.Black, color = Color(0xFF1E3A8A))
                 Text("(+10)", fontSize = 13.sp, fontWeight = FontWeight.Black, color = Color(0xFF16A34A))
@@ -65,7 +121,7 @@ fun QuizScreenCorrectState(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        // 2. TIMER BAR (08s)
+        // 2. TIMER BAR
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -90,7 +146,7 @@ fun QuizScreenCorrectState(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 3. KARTU SOAL & POP-UP "CORRECT!"
+        // 3. KARTU SOAL
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,7 +156,6 @@ fun QuizScreenCorrectState(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                // Teks Soal: 10 + 5 = ?
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("10 ", fontSize = 48.sp, fontWeight = FontWeight.Black, color = Color(0xFF1E293B))
                     Text("+ ", fontSize = 48.sp, fontWeight = FontWeight.Black, color = Color(0xFF3B82F6))
@@ -109,15 +164,12 @@ fun QuizScreenCorrectState(
             }
         }
 
-        // Tampilkan pop-up CorrectPopupDialog
-        com.example.math_quiz.ui.components.CorrectPopupDialog(
-            pointsEarned = 10
-        )
+        // 4. POP-UP CORRECT (pakai CorrectPopupContent — aman Preview & Runtime)
+        CorrectPopupContent(pointsEarned = 10)
 
         Spacer(modifier = Modifier.height(26.dp))
 
-        // 4. GRID PILIHAN JAWABAN (2x2)
-        // Tombol "15" adalah jawaban benar (hijau dan bersinar)
+        // 5. GRID PILIHAN JAWABAN (2x2)
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             AnswerOptionButton(
                 text = "10",
@@ -162,15 +214,14 @@ fun QuizScreenCorrectState(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 5. TOMBOL "NEXT >"
-        QuizNextButton(
-            onClick = onNextQuestion
-        )
+        // 6. TOMBOL NEXT
+        QuizNextButton(onClick = onNextQuestion)
 
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
+// ── Layar Quiz saat jawaban SALAH ─────────────────────────────────────────────
 @Composable
 fun QuizScreenIncorrectState(
     onNextQuestion: () -> Unit = {}
@@ -178,33 +229,25 @@ fun QuizScreenIncorrectState(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFE0F2FE)) // Sky blue background
+            .background(Color(0xFFE0F2FE))
             .padding(horizontal = 20.dp)
             .padding(top = 20.dp, bottom = 24.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 1. TOP BAR (Level, 3/10, Score)
+        // 1. TOP BAR
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Back Button menggunakan asset back.png asli
-            Image(
-                painter = painterResource(id = R.drawable.back),
-                contentDescription = "Back",
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.size(44.dp)
-            )
+            BackButton()
 
-            // Pills Info
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 CapsuleBadge(text = "Level 3")
                 CapsuleBadge(text = "3/10")
             }
 
-            // Score Badge (skor tidak bertambah)
             Column(horizontalAlignment = Alignment.End) {
                 Text("🏆 Score: 120", fontSize = 14.sp, fontWeight = FontWeight.Black, color = Color(0xFF1E3A8A))
                 Text("(+0)", fontSize = 13.sp, fontWeight = FontWeight.Black, color = Color(0xFFDC2626))
@@ -213,7 +256,7 @@ fun QuizScreenIncorrectState(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        // 2. TIMER BAR (08s)
+        // 2. TIMER BAR
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -238,7 +281,7 @@ fun QuizScreenIncorrectState(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 3. KARTU SOAL & POP-UP "INCORRECT!"
+        // 3. KARTU SOAL
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,7 +291,6 @@ fun QuizScreenIncorrectState(
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                // Teks Soal: 10 + 5 = ?
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text("10 ", fontSize = 48.sp, fontWeight = FontWeight.Black, color = Color(0xFF1E293B))
                     Text("+ ", fontSize = 48.sp, fontWeight = FontWeight.Black, color = Color(0xFF3B82F6))
@@ -258,9 +300,13 @@ fun QuizScreenIncorrectState(
             }
         }
 
-        Spacer(modifier = Modifier.height(26.dp))
+        // 4. POP-UP INCORRECT (pakai IncorrectPopupContent — aman Preview & Runtime)
+        Spacer(modifier = Modifier.height(12.dp))
+        IncorrectPopupContent(correctAnswer = "15")
 
-        // 4. GRID PILIHAN JAWABAN (2x2)
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // 5. GRID PILIHAN JAWABAN (2x2)
         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
             AnswerOptionButton(
                 text = "10",
@@ -306,29 +352,21 @@ fun QuizScreenIncorrectState(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 5. TOMBOL "NEXT >"
-        QuizNextButton(
-            onClick = onNextQuestion
-        )
+        // 6. TOMBOL NEXT
+        QuizNextButton(onClick = onNextQuestion)
 
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
+// ── Previews ──────────────────────────────────────────────────────────────────
 
-@Composable
-private fun CapsuleBadge(text: String) {
-    Box(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(Color(0xFFDBEAFE))
-            .padding(horizontal = 14.dp, vertical = 6.dp)
-    ) {
-        Text(text, fontSize = 14.sp, fontWeight = FontWeight.Black, color = Color(0xFF1E3A8A))
-    }
-}
-
-@androidx.compose.ui.tooling.preview.Preview(name = "Quiz Correct Screen", showBackground = true, widthDp = 390, heightDp = 844)
+@androidx.compose.ui.tooling.preview.Preview(
+    name = "Quiz Correct Screen",
+    showBackground = true,
+    widthDp = 390,
+    heightDp = 844
+)
 @Composable
 fun QuizScreenCorrectPreview() {
     com.example.math_quiz.ui.theme.MathquizTheme {
@@ -336,7 +374,12 @@ fun QuizScreenCorrectPreview() {
     }
 }
 
-@androidx.compose.ui.tooling.preview.Preview(name = "Quiz Incorrect Screen", showBackground = true, widthDp = 390, heightDp = 844)
+@androidx.compose.ui.tooling.preview.Preview(
+    name = "Quiz Incorrect Screen",
+    showBackground = true,
+    widthDp = 390,
+    heightDp = 844
+)
 @Composable
 fun QuizScreenIncorrectPreview() {
     com.example.math_quiz.ui.theme.MathquizTheme {

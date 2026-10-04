@@ -371,48 +371,93 @@ fun SplashScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // Judul Aplikasi: "Math Quiz" (Gaya Timbul Playful 3D)
+            // Judul Aplikasi: "Math Quiz" Melengkung Halus dengan Outline & Shadow Stiker 3D (Persis Main Menu)
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Center
             ) {
-                // Kata "Math" (Biru Bergradasi dengan Shadow)
-                Text(
-                    text = "Math",
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = QuizBlue,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .shadow(
-                            elevation = 4.dp,
-                            shape = CircleShape,
-                            spotColor = QuizBlueDark.copy(alpha = 0.35f)
-                        )
-                )
+                // Spark kiri
+                Canvas(modifier = Modifier.size(width = 12.dp, height = 18.dp).rotate(-15f).offset(y = (-10).dp)) {
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(0f, 6f), size = Size(4f, 10f), cornerRadius = CornerRadius(2f, 2f))
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(8f, 0f), size = Size(4f, 18f), cornerRadius = CornerRadius(2f, 2f))
+                }
+                Spacer(modifier = Modifier.width(6.dp))
 
-                // Kata "Quiz" (Oranye/Kuning Cerah dengan Shadow)
-                Text(
-                    text = "Quiz",
-                    fontSize = 48.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = QuizOrange,
-                    modifier = Modifier.shadow(
-                        elevation = 4.dp,
-                        shape = CircleShape,
-                        spotColor = QuizOrangeDark.copy(alpha = 0.35f)
-                    )
-                )
+                val title = "Math Quiz"
+                val middle = (title.length - 1) / 2f
+
+                title.forEachIndexed { index, char ->
+                    if (char == ' ') {
+                        Spacer(modifier = Modifier.width(4.dp))
+                    } else {
+                        val isMath = index < 4
+                        val color = if (isMath) QuizBlue else QuizOrange
+                        val diff = index - middle
+                        val angle = diff * 1.5f
+                        val yOffset = (diff * diff * 0.4f).dp
+
+                        val outlineWidth = 16f
+
+                        Box(
+                            modifier = Modifier
+                                .offset(y = yOffset)
+                                .rotate(angle),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            // 1. Drop Shadow (Stroke tebal di-offset)
+                            Text(
+                                text = char.toString(),
+                                fontSize = 54.sp,
+                                fontWeight = FontWeight.Black,
+                                color = Color.Black.copy(alpha = 0.15f),
+                                style = androidx.compose.ui.text.TextStyle(
+                                    drawStyle = Stroke(
+                                        width = outlineWidth,
+                                        join = androidx.compose.ui.graphics.StrokeJoin.Round
+                                    )
+                                ),
+                                modifier = Modifier.offset(x = 0.dp, y = 6.dp)
+                            )
+                            // 2. Outline Putih Tebal
+                            Text(
+                                text = char.toString(),
+                                fontSize = 54.sp,
+                                fontWeight = FontWeight.Black,
+                                color = Color.White,
+                                style = androidx.compose.ui.text.TextStyle(
+                                    drawStyle = Stroke(
+                                        width = outlineWidth,
+                                        join = androidx.compose.ui.graphics.StrokeJoin.Round
+                                    )
+                                )
+                            )
+                            // 3. Teks Utama (Isi warna)
+                            Text(
+                                text = char.toString(),
+                                fontSize = 54.sp,
+                                fontWeight = FontWeight.Black,
+                                color = color
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(6.dp))
+                // Spark kanan
+                Canvas(modifier = Modifier.size(width = 12.dp, height = 18.dp).rotate(15f).offset(y = (-10).dp)) {
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(8f, 6f), size = Size(4f, 10f), cornerRadius = CornerRadius(2f, 2f))
+                    drawRoundRect(color = QuizYellow, topLeft = Offset(0f, 0f), size = Size(4f, 18f), cornerRadius = CornerRadius(2f, 2f))
+                }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            // Tagline: "Challenge Your Math Skills!"
+            // Tagline: "Test your math skills!" (Samakan dengan Main Menu)
             Text(
-                text = "Challenge Your Math Skills!",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = QuizTextDark.copy(alpha = 0.82f),
+                text = "Test your math skills!",
+                fontSize = 21.sp,
+                fontWeight = FontWeight.Black,
+                color = QuizTextDark.copy(alpha = 0.85f),
                 textAlign = TextAlign.Center,
                 letterSpacing = 0.3.sp
             )

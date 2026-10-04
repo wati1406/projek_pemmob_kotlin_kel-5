@@ -36,6 +36,8 @@ class MainActivity : ComponentActivity() {
                     val context = LocalContext.current
                     var currentScreen by remember { mutableStateOf("SPLASH") }
                     var selectedLevel by remember { mutableStateOf(1) }
+                    var finalScore by remember { mutableStateOf(0) }
+                    var showResultDialog by remember { mutableStateOf(false) }
 
                     // Putar BGM global, ganti ke result.mp3 saat halaman RESULT
                     LaunchedEffect(currentScreen) {
@@ -127,24 +129,36 @@ class MainActivity : ComponentActivity() {
                                 onNextClick = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
                                 },
-                                onQuizCompleted = { currentScreen = "RESULT" }
+                                onQuizCompleted = { score ->
+                                    finalScore = score
+                                    currentScreen = "RESULT"
+                                }
                             )
                         }
 
                         "RESULT" -> {
                             com.example.math_quiz.ui.screens.QuizResultDialog(
+                                score = finalScore,
                                 onNextLevel = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
                                     currentScreen = "MAIN_MENU"
                                 },
                                 onPlayAgain = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
-                                    currentScreen = "MAIN_MENU"
+                                    finalScore = 0
+                                    currentScreen = "QUIZ"
                                 },
                                 onHome = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
                                     currentScreen = "MAIN_MENU"
                                 }
+                            )
+                        }
+
+                        "CORRECT" -> {
+                            com.example.math_quiz.ui.screens.QuizScreenCorrectState(
+                                onNextQuestion = { currentScreen = "QUIZ" }
+
                             )
                         }
                     }

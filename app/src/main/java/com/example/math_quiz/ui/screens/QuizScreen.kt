@@ -60,6 +60,7 @@ import com.example.math_quiz.R
 import com.example.math_quiz.data.QuizRepository
 import com.example.math_quiz.ui.components.PrimaryButton
 import com.example.math_quiz.ui.components.IncorrectPopupContent
+import com.example.math_quiz.ui.components.CorrectPopupContent
 import com.example.math_quiz.ui.theme.*
 import kotlinx.coroutines.delay
 
@@ -79,7 +80,7 @@ fun QuizScreen(
     onCorrectAnswer: () -> Unit = {},
     onWrongAnswer: () -> Unit = {},
     onNextClick: () -> Unit = {},
-    onQuizCompleted: () -> Unit = {}
+    onQuizCompleted: (Int) -> Unit = {}
 ) {
     // Menentukan durasi waktu berdasarkan tingkat kesulitan:
     // Easy (Level 1) = 15 detik, Medium (Level 2) = 13 detik, Hard (Level 3) = 10 detik
@@ -94,17 +95,17 @@ fun QuizScreen(
     val questions = remember(level) { QuizRepository.getQuestionsByLevel(level) }
     var currentIndex by remember { mutableIntStateOf(0) }
     val currentQuestion = questions.getOrElse(currentIndex) { questions.first() }
-    
+
     val questionNumber = currentIndex + 1
     val totalQuestions = questions.size
-    
+
     // Skor dinamis: bertambah +10 setiap jawaban benar
     var score by remember { mutableIntStateOf(0) }
-    
+
     // State jawaban dan feedback
     var selectedOption by remember(currentIndex) { mutableStateOf<String?>(null) }
     var feedbackType by remember(currentIndex) { mutableStateOf(FeedbackType.NONE) }
-    
+
     // Timer state per soal (di-reset otomatis setiap kali currentIndex berubah)
     var timeLeft by remember(currentIndex) { mutableIntStateOf(totalDuration) }
     val options = currentQuestion.options
@@ -153,7 +154,7 @@ fun QuizScreen(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .padding(top = 36.dp, bottom = 24.dp)
-                .verticalScroll(scrollState), 
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Top Bar
@@ -191,7 +192,7 @@ fun QuizScreen(
                     CorrectConfettiSparkles(
                         modifier = Modifier.matchParentSize()
                     )
-                    CorrectInCardBanner(
+                    CorrectPopupContent(
                         pointsEarned = 10,
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
@@ -248,7 +249,7 @@ fun QuizScreen(
                             feedbackType = FeedbackType.NONE
                             selectedOption = null
                         } else {
-                            onQuizCompleted()
+                            onQuizCompleted(score)
                         }
                     }
                 )
@@ -343,9 +344,9 @@ fun QuizTopBar(
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "🏆 Score: ", 
+                    text = "🏆 Score: ",
                     fontSize = 13.sp,
-                    color = badgeText // Tambahkan ini
+                    color = badgeText
                 )
                 Text(
                     text = "$score",
@@ -398,7 +399,7 @@ fun QuizTimer(
             color = if (isTimeUp) Color(0xFFDC2626) else QuizTextNavy
         )
         Spacer(modifier = Modifier.width(12.dp))
-        
+
         // Custom Progress Bar (murni visual, tidak dapat di-drag/interaktif)
         Box(
             modifier = Modifier
@@ -535,13 +536,14 @@ fun QuizQuestionCard(
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxWidth()
-                .padding(horizontal = 46.dp),
+                .padding(horizontal = 24.dp),
             contentAlignment = Alignment.Center
         ) {
             val dynamicFontSize = when {
-                questionText.length > 13 -> 44.sp
-                questionText.length > 10 -> 50.sp
-                else -> 58.sp
+                questionText.length > 14 -> 30.sp
+                questionText.length > 11 -> 34.sp
+                questionText.length > 8  -> 40.sp
+                else -> 44.sp
             }
 
             Text(
@@ -953,7 +955,7 @@ fun QuizBackgroundDecorations() {
                 .offset(x = 60.dp, y = (-70).dp)
                 .rotate(-15f)
         )
-        
+
         Text(
             text = "3",
             color = QuizGreenLight.copy(alpha = 0.4f),
@@ -964,7 +966,7 @@ fun QuizBackgroundDecorations() {
                 .offset(x = 20.dp, y = (-30).dp)
                 .rotate(10f)
         )
-        
+
         Text(
             text = "➕",
             color = QuizYellowDark.copy(alpha = 0.5f),
@@ -982,105 +984,6 @@ fun QuizBackgroundDecorations() {
 fun QuizScreenPreview() {
     MathquizTheme {
         QuizScreen(level = 3)
-    }
-}
-
-/**
- * Banner "Correct!" yang muncul sebagai overlay di bagian bawah Question Card (in-card).
- * Tidak menggunakan Dialog/Modal — tampil sebagai elemen yang melayang di atas kartu soal.
- * Terdiri dari: ikon centang hijau, teks "Correct!", dan badge "+10" di bawahnya.
- */
-@Composable
-fun CorrectInCardBanner(
-    pointsEarned: Int = 10,
-    modifier: Modifier = Modifier
-) {
-    val scale = remember { Animatable(0.6f) }
-    LaunchedEffect(Unit) {
-        scale.animateTo(
-            targetValue = 1f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMediumLow
-            )
-        )
-    }
-
-    Column(
-        modifier = modifier
-            .graphicsLayer { scaleX = scale.value; scaleY = scale.value }
-            .padding(bottom = 18.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(0.dp)
-    ) {
-        // Kapsul "Correct!" hijau dengan ikon centang
-        Box(
-            modifier = Modifier
-                .shadow(10.dp, RoundedCornerShape(50.dp), spotColor = Color(0x6022C55E))
-                .clip(RoundedCornerShape(50.dp))
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFF4ADE80), Color(0xFF16A34A))
-                    )
-                )
-                .padding(horizontal = 28.dp, vertical = 9.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Ikon centang putih dalam lingkaran gelap
-                Box(
-                    modifier = Modifier
-                        .size(26.dp)
-                        .background(Color(0xFF14532D), CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "✓",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-                Text(
-                    text = "Correct!",
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Black,
-                    style = androidx.compose.ui.text.TextStyle(
-                        shadow = androidx.compose.ui.graphics.Shadow(
-                            color = Color(0x4014532D),
-                            offset = Offset(0f, 3f),
-                            blurRadius = 4f
-                        )
-                    )
-                )
-            }
-        }
-
-        // Badge "+10" kuning di bawah kapsul Correct
-        Box(
-            modifier = Modifier
-                .offset(y = (-4).dp)
-                .shadow(6.dp, RoundedCornerShape(50.dp), spotColor = Color(0x80D97706))
-                .clip(RoundedCornerShape(50.dp))
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color(0xFFFDE047), Color(0xFFFBBF24))
-                    )
-                )
-                .padding(horizontal = 18.dp, vertical = 4.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "+$pointsEarned",
-                color = Color(0xFF78350F),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Black
-            )
-        }
     }
 }
 
@@ -1107,7 +1010,7 @@ fun CorrectConfettiSparkles(
         val w = size.width
         val h = size.height
 
-        // Sparkle positions — 4 sudut card + 2 sisi tengah
+        // Sparkle positions — 4 sudut card + 3 sisi tengah
         val sparkles = listOf(
             Triple(w * 0.08f, h * 0.12f, Color(0xFFFBBF24)), // kiri atas — kuning
             Triple(w * 0.92f, h * 0.10f, Color(0xFF4ADE80)), // kanan atas — hijau
@@ -1221,7 +1124,7 @@ fun TimesUpPopupBanner(
                         color = sparkColors[i].copy(alpha = 0.8f),
                         start = Offset(px, py),
                         end   = Offset(px + (armLen * Math.cos(a)).toFloat(),
-                                       py + (armLen * Math.sin(a)).toFloat()),
+                            py + (armLen * Math.sin(a)).toFloat()),
                         strokeWidth = 4.dp.toPx(),
                         cap   = StrokeCap.Round
                     )
@@ -1421,4 +1324,3 @@ fun QuizNextButton(
             )
     )
 }
-
