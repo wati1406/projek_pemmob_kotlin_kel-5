@@ -76,6 +76,9 @@ fun QuizScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onOptionSelected: (String) -> Unit = {},
+    onCorrectAnswer: () -> Unit = {},
+    onWrongAnswer: () -> Unit = {},
+    onNextClick: () -> Unit = {},
     onQuizCompleted: () -> Unit = {}
 ) {
     // Menentukan durasi waktu berdasarkan tingkat kesulitan:
@@ -224,8 +227,10 @@ fun QuizScreen(
                         if (isCorrect) {
                             score += 10
                             feedbackType = FeedbackType.CORRECT
+                            onCorrectAnswer()
                         } else {
                             feedbackType = FeedbackType.INCORRECT
+                            onWrongAnswer()
                         }
                         onOptionSelected(selected)
                     }
@@ -237,6 +242,7 @@ fun QuizScreen(
                 Spacer(modifier = Modifier.height(20.dp))
                 QuizNextButton(
                     onClick = {
+                        onNextClick()
                         if (currentIndex < questions.size - 1) {
                             currentIndex++
                             feedbackType = FeedbackType.NONE

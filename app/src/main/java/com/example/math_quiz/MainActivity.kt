@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.math_quiz.audio.SoundManager
 import com.example.math_quiz.ui.screens.LevelSelectionScreen
 import com.example.math_quiz.ui.screens.MainMenuScreen
 import com.example.math_quiz.ui.screens.SettingsScreen
@@ -22,14 +25,25 @@ import com.example.math_quiz.ui.screens.QuizScreen
 import com.example.math_quiz.ui.theme.MathquizTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        SoundManager.init(this)
         enableEdgeToEdge()
         setContent {
             MathquizTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val context = LocalContext.current
                     var currentScreen by remember { mutableStateOf("SPLASH") }
                     var selectedLevel by remember { mutableStateOf(1) }
+
+                    // Putar BGM global, ganti ke result.mp3 saat halaman RESULT
+                    LaunchedEffect(currentScreen) {
+                        when (currentScreen) {
+                            "RESULT" -> SoundManager.playResult(context)
+                            else     -> SoundManager.playBgm()
+                        }
+                    }
 
                     when (currentScreen) {
                         "SPLASH" -> {
@@ -43,33 +57,52 @@ class MainActivity : ComponentActivity() {
                             MainMenuScreen(
                                 modifier = Modifier.padding(innerPadding),
                                 currentLevel = 3,
-                                onPlayClick = { currentScreen = "LEVEL_SELECTION" },
-                                onHighScoreClick = { /* High Score dialog/screen */ },
-                                onSettingsClick = { currentScreen = "SETTINGS" }
+                                onPlayClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "LEVEL_SELECTION"
+                                },
+                                onHighScoreClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                },
+                                onSettingsClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "SETTINGS"
+                                }
                             )
                         }
 
                         "SETTINGS" -> {
                             SettingsScreen(
                                 modifier = Modifier.padding(innerPadding),
-                                onBackClick = { currentScreen = "MAIN_MENU" },
-                                onAboutClick = { /* TODO: About dialog */ }
+                                onBackClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "MAIN_MENU"
+                                },
+                                onAboutClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                }
                             )
                         }
 
                         "LEVEL_SELECTION" -> {
                             LevelSelectionScreen(
                                 modifier = Modifier.padding(innerPadding),
-                                onBackClick = { currentScreen = "MAIN_MENU" },
+                                onBackClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "MAIN_MENU"
+                                },
                                 onEasyClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.LEVEL)
                                     selectedLevel = 1
                                     currentScreen = "QUIZ"
                                 },
                                 onMediumClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.LEVEL)
                                     selectedLevel = 2
                                     currentScreen = "QUIZ"
                                 },
                                 onHardClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.LEVEL)
                                     selectedLevel = 3
                                     currentScreen = "QUIZ"
                                 }
@@ -80,29 +113,59 @@ class MainActivity : ComponentActivity() {
                             QuizScreen(
                                 level = selectedLevel,
                                 modifier = Modifier.padding(innerPadding),
-                                onBackClick = { currentScreen = "LEVEL_SELECTION" },
-                                onOptionSelected = { /* Logic will be handled later */ },
+                                onBackClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "LEVEL_SELECTION"
+                                },
+                                onOptionSelected = { /* handled inside QuizScreen */ },
+                                onCorrectAnswer = {
+                                    SoundManager.playSfx(SoundManager.SFX.CORRECT)
+                                },
+                                onWrongAnswer = {
+                                    SoundManager.playSfx(SoundManager.SFX.INCORRECT)
+                                },
+                                onNextClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                },
                                 onQuizCompleted = { currentScreen = "RESULT" }
-                            )
-                        }
-
-                        "CORRECT" -> {
-                            com.example.math_quiz.ui.screens.QuizScreenCorrectState(
-                                onNextQuestion = { currentScreen = "RESULT" }
                             )
                         }
 
                         "RESULT" -> {
                             com.example.math_quiz.ui.screens.QuizResultDialog(
-                                onNextLevel = { currentScreen = "MAIN_MENU" },
-                                onPlayAgain = { currentScreen = "MAIN_MENU" },
-                                onHome = { currentScreen = "MAIN_MENU" }
+                                onNextLevel = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "MAIN_MENU"
+                                },
+                                onPlayAgain = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "MAIN_MENU"
+                                },
+                                onHome = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "MAIN_MENU"
+                                }
                             )
                         }
                     }
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SoundManager.resumeBgm()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        SoundManager.pauseBgm()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        SoundManager.release()
     }
 }
 
