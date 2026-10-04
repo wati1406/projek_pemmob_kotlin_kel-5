@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.math_quiz.R
+import com.example.math_quiz.ui.theme.FredokaFontFamily
 import com.example.math_quiz.ui.theme.QuizGreen
 import com.example.math_quiz.ui.theme.QuizGreenDark
 import com.example.math_quiz.ui.theme.QuizGreenLight
@@ -190,6 +191,7 @@ fun PrimaryButton(
                         color = Color.White,
                         fontSize = fontSize,
                         fontWeight = FontWeight.Black,
+                        fontFamily = FredokaFontFamily,
                         letterSpacing = 1.sp,
                         modifier = Modifier.shadow(
                             elevation = 2.dp,

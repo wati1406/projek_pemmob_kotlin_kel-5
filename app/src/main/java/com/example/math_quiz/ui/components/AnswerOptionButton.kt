@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.math_quiz.ui.theme.FredokaFontFamily
 
 @Composable
 fun AnswerOptionButton(
@@ -101,6 +102,7 @@ fun AnswerOptionButton(
                 color = Color.White,
                 fontSize = 42.sp,
                 fontWeight = FontWeight.Black,
+                fontFamily = FredokaFontFamily,
                 modifier = Modifier.shadow(2.dp, CircleShape, spotColor = Color(0x40000000))
             )
         }
@@ -120,7 +122,8 @@ fun AnswerOptionButton(
                     text = "✓",
                     color = Color(0xFF16A34A),
                     fontSize = 18.sp,
-                    fontWeight = FontWeight.Black
+                    fontWeight = FontWeight.Black,
+                    fontFamily = FredokaFontFamily
                 )
             }
         }

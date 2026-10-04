@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.math_quiz.ui.theme.FredokaFontFamily
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
@@ -97,6 +98,8 @@ fun QuizResultDialog(
     onPlayAgain: () -> Unit = {},
     onHome: () -> Unit = {}
 ) {
+    val roundedFont = FredokaFontFamily
+
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(

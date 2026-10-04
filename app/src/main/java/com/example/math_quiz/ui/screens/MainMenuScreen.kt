@@ -62,7 +62,7 @@ import com.example.math_quiz.ui.theme.*
  * Layar 2: MainMenuScreen
  * - Maskot buku di tengah dengan judul "Math Quiz" + tagline "Test your math skills!"
  * - Tombol besar "PLAY" (hijau, pill-shaped 3D)
- * - Dua tombol kecil sejajar "HIGH SCORE" dan "SETTINGS"
+ * - Tombol "SETTINGS" di bawah PLAY
  * - Indikator level saat ini di bawah
  */
 @Composable
@@ -70,7 +70,6 @@ fun MainMenuScreen(
     modifier: Modifier = Modifier,
     currentLevel: Int = 3,
     onPlayClick: () -> Unit = {},
-    onHighScoreClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {}
 ) {
     // Animasi mengambang untuk dekorasi latar (floating elements)
@@ -474,30 +473,15 @@ fun MainMenuScreen(
 
             Spacer(modifier = Modifier.height(8.dp)) // Didekatkan ke row bawah
 
-            // E. Dua Tombol Sejajar: "HIGH SCORE" & "SETTINGS"
-            // Rasio asli: btn_high_score=2.89, btn_settings=2.76 → pakai 2.83 agar keduanya identik
-            Row(
-                modifier = Modifier.fillMaxWidth(0.88f),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                MenuAssetButton(
-                    imageResId = R.drawable.btn_high_score,
-                    contentDescription = "HIGH SCORE",
-                    onClick = onHighScoreClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(2.83f)
-                )
-                MenuAssetButton(
-                    imageResId = R.drawable.btn_settings,
-                    contentDescription = "SETTINGS",
-                    onClick = onSettingsClick,
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(2.83f)
-                )
-            }
+            // E. Tombol Settings — terpusat di bawah PLAY
+            MenuAssetButton(
+                imageResId = R.drawable.btn_settings,
+                contentDescription = "SETTINGS",
+                onClick = onSettingsClick,
+                modifier = Modifier
+                    .fillMaxWidth(0.65f)
+                    .aspectRatio(2.83f)
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 

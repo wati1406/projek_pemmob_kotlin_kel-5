@@ -63,9 +63,6 @@ class MainActivity : ComponentActivity() {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
                                     currentScreen = "LEVEL_SELECTION"
                                 },
-                                onHighScoreClick = {
-                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
-                                },
                                 onSettingsClick = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
                                     currentScreen = "SETTINGS"
