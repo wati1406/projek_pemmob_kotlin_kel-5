@@ -1399,7 +1399,7 @@ fun QuizNextButton(
         contentDescription = "Next",
         contentScale = ContentScale.Fit,
         modifier = modifier
-            .fillMaxWidth(0.78f)
+            .fillMaxWidth(0.55f)
             .aspectRatio(2170f / 725f)
             .scale(scale)
             .clickable(
