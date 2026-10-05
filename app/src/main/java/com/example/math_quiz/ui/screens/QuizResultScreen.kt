@@ -79,6 +79,7 @@ private fun CardDecorations() {
             )
             Text(
                 text       = d.text,
+                fontFamily = FredokaFontFamily,
                 fontSize   = d.sizeSp.sp,
                 fontWeight = FontWeight.Black,
                 color      = d.color.copy(alpha = 0.50f),
@@ -98,8 +99,6 @@ fun QuizResultDialog(
     onPlayAgain: () -> Unit = {},
     onHome: () -> Unit = {}
 ) {
-    val roundedFont = FredokaFontFamily
-
     Dialog(
         onDismissRequest = {},
         properties = DialogProperties(
@@ -150,7 +149,7 @@ fun QuizResultDialog(
                 // ── Judul ─────────────────────────────────────────────────────
                 Text(
                     text       = "Quiz Complete!",
-                    fontFamily = FontFamily.SansSerif,
+                    fontFamily = FredokaFontFamily,
                     fontSize   = 28.sp,
                     fontWeight = FontWeight.Black,
                     color      = Color(0xFF1E3A8A)
@@ -161,7 +160,7 @@ fun QuizResultDialog(
                 // ── Label skor ────────────────────────────────────────────────
                 Text(
                     text       = "Score",
-                    fontFamily = FontFamily.SansSerif,
+                    fontFamily = FredokaFontFamily,
                     fontSize   = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color      = Color(0xFF64748B)
@@ -180,7 +179,7 @@ fun QuizResultDialog(
                     Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text       = "$score",
-                        fontFamily = FontFamily.SansSerif,
+                        fontFamily = FredokaFontFamily,
                         fontSize   = 68.sp,
                         fontWeight = FontWeight.Black,
                         color      = Color(0xFF1E3A8A)
@@ -210,6 +209,7 @@ fun QuizResultDialog(
                 ) {
                     Text(
                         text       = pillText,
+                        fontFamily = FredokaFontFamily,
                         fontSize   = 16.sp,
                         fontWeight = FontWeight.Black,
                         color      = pillColor

@@ -747,182 +747,225 @@ fun QuizOptionButton(
 
     // Warna 3-stop glossy: terang atas, mid tengah, gelap bawah
     val isWhite = buttonColor == Color.White
-    val topColor = if (isWhite) Color(0xFFFFFFFF) else Color(
-        (buttonColor.red + (1f - buttonColor.red) * 0.35f).coerceIn(0f, 1f),
-        (buttonColor.green + (1f - buttonColor.green) * 0.35f).coerceIn(0f, 1f),
-        (buttonColor.blue + (1f - buttonColor.blue) * 0.35f).coerceIn(0f, 1f)
-    )
-    val botColor = if (isWhite) Color(0xFFE2E8F3) else Color(
-        (buttonColor.red * 0.68f).coerceIn(0f, 1f),
-        (buttonColor.green * 0.68f).coerceIn(0f, 1f),
-        (buttonColor.blue * 0.68f).coerceIn(0f, 1f)
-    )
 
-    Box(
-        modifier = modifier
-            .height(110.dp)
-            .scale(scale)
-            .shadow(
-                elevation = if (isPressed && enabled) 2.dp else if (showBorder) 8.dp else 14.dp,
-                shape = RoundedCornerShape(24.dp),
-                spotColor = shadowColor.copy(alpha = if (isWhite) 0.22f else 0.55f),
-                ambientColor = shadowColor.copy(alpha = if (isWhite) 0.10f else 0.28f)
-            )
-            .clip(RoundedCornerShape(24.dp))
-            // Gradien 3-stop: terang atas → warna asli tengah → gelap bawah
-            .background(
-                brush = Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0.00f to topColor,
-                        0.50f to buttonColor,
-                        1.00f to botColor
-                    )
-                )
-            )
-            .then(
-                if (showBorder) Modifier.border(
-                    width = 2.dp,
-                    color = Color(0xFFDDE3EE),
-                    shape = RoundedCornerShape(24.dp)
-                ) else Modifier
-            )
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                enabled = enabled,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        // ── Layer 1: bottom darken strip untuk kedalaman 3D
+    if (isWhite) {
+        // ── TAMPILAN PUTIH BERSIH MURNI (Solid Clean White) ───────────────────
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.42f)
-                .align(Alignment.BottomCenter)
+            modifier = modifier
+                .height(110.dp)
+                .scale(scale)
+                .shadow(
+                    elevation = if (isPressed && enabled) 2.dp else 6.dp,
+                    shape = RoundedCornerShape(24.dp),
+                    spotColor = Color(0x18000000),
+                    ambientColor = Color(0x0C000000)
+                )
+                .clip(RoundedCornerShape(24.dp))
+                .background(Color.White)
+                .border(
+                    width = 2.dp,
+                    color = Color(0xFFE2E8F0),
+                    shape = RoundedCornerShape(24.dp)
+                )
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = enabled,
+                    onClick = onClick
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            // Teks angka gelap pekat di atas kartu putih bersih
+            Text(
+                text = text,
+                color = textColor,
+                fontFamily = FredokaFontFamily,
+                fontSize = 44.sp,
+                fontWeight = FontWeight.Black,
+                textAlign = TextAlign.Center
+            )
+
+            // Badge centang hijau jika jawaban benar
+            if (isCorrect) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(28.dp)
+                        .shadow(4.dp, CircleShape)
+                        .background(Color(0xFF22C55E), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "✓",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
+
+            // Badge silang merah jika opsi salah yang dipilih
+            if (isWrong) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(28.dp)
+                        .shadow(4.dp, CircleShape)
+                        .background(Color(0xFFEF4444), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "✕",
+                        color = Color.White,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
+        }
+    } else {
+        // ── TAMPILAN BERWARNA 3D (Saat dijawab: Hijau Benar / Merah Salah / Abu-abu) ──
+        val topColor = Color(
+            (buttonColor.red + (1f - buttonColor.red) * 0.35f).coerceIn(0f, 1f),
+            (buttonColor.green + (1f - buttonColor.green) * 0.35f).coerceIn(0f, 1f),
+            (buttonColor.blue + (1f - buttonColor.blue) * 0.35f).coerceIn(0f, 1f)
+        )
+        val botColor = Color(
+            (buttonColor.red * 0.68f).coerceIn(0f, 1f),
+            (buttonColor.green * 0.68f).coerceIn(0f, 1f),
+            (buttonColor.blue * 0.68f).coerceIn(0f, 1f)
+        )
+
+        Box(
+            modifier = modifier
+                .height(110.dp)
+                .scale(scale)
+                .shadow(
+                    elevation = if (isPressed && enabled) 2.dp else 14.dp,
+                    shape = RoundedCornerShape(24.dp),
+                    spotColor = shadowColor.copy(alpha = 0.55f),
+                    ambientColor = shadowColor.copy(alpha = 0.28f)
+                )
+                .clip(RoundedCornerShape(24.dp))
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color.Transparent,
-                            Color.Black.copy(alpha = if (isWhite) 0.06f else 0.24f)
+                        colorStops = arrayOf(
+                            0.00f to topColor,
+                            0.50f to buttonColor,
+                            1.00f to botColor
                         )
                     )
                 )
-        )
-
-        // ── Layer 2: Canvas glossy berlapis
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val w = size.width
-            val h = size.height
-
-            // 2a. Highlight lebar atas → fade ke transparan (kaca)
-            drawRect(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = if (isWhite) 0.52f else 0.36f),
-                        Color.White.copy(alpha = 0f)
-                    ),
-                    startY = 0f,
-                    endY = h * 0.62f
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    enabled = enabled,
+                    onClick = onClick
                 ),
-                size = Size(w, h * 0.62f)
-            )
-
-            // 2b. Pil glossy tebal di atas (kilau kuat)
-            drawRoundRect(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = if (isWhite) 0.88f else 0.52f),
-                        Color.White.copy(alpha = 0f)
-                    ),
-                    startY = h * 0.04f,
-                    endY = h * 0.32f
-                ),
-                topLeft = Offset(w * 0.10f, h * 0.07f),
-                size = Size(w * 0.80f, h * 0.24f),
-                cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx())
-            )
-
-            // 2c. Kilauan tepi kiri (efek silinder)
-            drawRect(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = if (isWhite) 0.28f else 0.15f),
-                        Color.Transparent
-                    ),
-                    startX = 0f,
-                    endX = w * 0.20f
-                )
-            )
-
-            // 2d. Kilauan tepi kanan
-            drawRect(
-                brush = Brush.horizontalGradient(
-                    colors = listOf(
-                        Color.Transparent,
-                        Color.White.copy(alpha = if (isWhite) 0.18f else 0.08f)
-                    ),
-                    startX = w * 0.80f,
-                    endX = w
-                )
-            )
-        }
-        // ── Teks angka
-        Text(
-            text = text,
-            color = textColor,
-            fontFamily = FredokaFontFamily,
-            fontSize = 44.sp,
-            fontWeight = FontWeight.Black,
-            textAlign = TextAlign.Center,
-            style = androidx.compose.ui.text.TextStyle(
-                shadow = androidx.compose.ui.graphics.Shadow(
-                    color = if (isWhite) Color(0x1A000000) else Color.Black.copy(alpha = 0.30f),
-                    offset = Offset(0f, 4f),
-                    blurRadius = 6f
-                )
-            )
-        )
-
-        // Badge centang hijau di sudut kanan atas jika jawaban benar
-        if (isCorrect) {
+            contentAlignment = Alignment.Center
+        ) {
+            // Layer 1: bottom darken strip
             Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(28.dp)
-                    .shadow(4.dp, CircleShape)
-                    .background(Color.White, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "✓",
-                    color = Color(0xFF16A34A),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Black
-                )
-            }
-        }
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.42f)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.24f)
+                            )
+                        )
+                    )
+            )
 
-        // Badge silang merah jika opsi salah yang dipilih
-        if (isWrong) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(28.dp)
-                    .shadow(4.dp, CircleShape)
-                    .background(Color.White, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "✕",
-                    color = Color(0xFFDC2626),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Black
+            // Layer 2: Canvas glossy
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val w = size.width
+                val h = size.height
+
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.White.copy(alpha = 0.36f), Color.White.copy(alpha = 0f)),
+                        startY = 0f,
+                        endY = h * 0.62f
+                    ),
+                    size = Size(w, h * 0.62f)
+                )
+
+                drawRoundRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.White.copy(alpha = 0.52f), Color.White.copy(alpha = 0f)),
+                        startY = h * 0.04f,
+                        endY = h * 0.32f
+                    ),
+                    topLeft = Offset(w * 0.10f, h * 0.07f),
+                    size = Size(w * 0.80f, h * 0.24f),
+                    cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx())
                 )
             }
+
+            // Teks angka
+            Text(
+                text = text,
+                color = textColor,
+                fontFamily = FredokaFontFamily,
+                fontSize = 44.sp,
+                fontWeight = FontWeight.Black,
+                textAlign = TextAlign.Center,
+                style = androidx.compose.ui.text.TextStyle(
+                    shadow = androidx.compose.ui.graphics.Shadow(
+                        color = Color.Black.copy(alpha = 0.30f),
+                        offset = Offset(0f, 4f),
+                        blurRadius = 6f
+                    )
+                )
+            )
+
+            // Badge centang hijau
+            if (isCorrect) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(28.dp)
+                        .shadow(4.dp, CircleShape)
+                        .background(Color.White, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "✓",
+                        color = Color(0xFF16A34A),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
+
+            // Badge silang merah
+            if (isWrong) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                        .size(28.dp)
+                        .shadow(4.dp, CircleShape)
+                        .background(Color.White, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "✕",
+                        color = Color(0xFFDC2626),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Black
+                    )
+                }
+            }
         }
+    }
     }
 }
 

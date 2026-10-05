@@ -153,6 +153,20 @@ class MainActivity : ComponentActivity() {
                         }
 
                         "RESULT" -> {
+                            // Tampilkan Main Menu di latar belakang
+                            MainMenuScreen(
+                                modifier = Modifier.padding(innerPadding),
+                                currentLevel = 3,
+                                onPlayClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "LEVEL_SELECTION"
+                                },
+                                onSettingsClick = {
+                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                                    currentScreen = "SETTINGS"
+                                }
+                            )
+
                             com.example.math_quiz.ui.screens.QuizResultDialog(
                                 score = finalScore,
                                 onNextLevel = {
