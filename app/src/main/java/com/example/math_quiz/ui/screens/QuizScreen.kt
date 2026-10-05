@@ -966,7 +966,6 @@ fun QuizOptionButton(
             }
         }
     }
-    }
 }
 
 @Composable
