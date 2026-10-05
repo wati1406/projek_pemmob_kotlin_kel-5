@@ -132,6 +132,15 @@ fun QuizScreen(
         }
     }
 
+    // Otomatis munculkan pop up Quiz Complete saat soal terakhir selesai dijawab atau waktu habis
+    LaunchedEffect(currentIndex, feedbackType) {
+        if (currentIndex >= questions.size - 1 && feedbackType != FeedbackType.NONE) {
+            delay(1000L)
+            showResultDialog = true
+            onQuizCompleted(score)
+        }
+    }
+
     // Coroutine timer countdown real-time:
     // Hanya berjalan saat feedbackType == NONE (belum dijawab dan belum time up).
     // Berhenti otomatis saat pengguna menjawab (CORRECT/INCORRECT) atau waktu habis (TIME_UP).
@@ -258,20 +267,16 @@ fun QuizScreen(
                 }
             )
 
-            // Tombol NEXT: muncul saat Correct, Incorrect, atau Time's Up
-            if (feedbackType != FeedbackType.NONE) {
+            // Tombol NEXT: hanya muncul untuk soal sebelum soal terakhir.
+            // Pada soal terakhir, pop-up hasil otomatis muncul setelah feedback selesai ditampilkan.
+            if (feedbackType != FeedbackType.NONE && currentIndex < questions.size - 1) {
                 Spacer(modifier = Modifier.height(20.dp))
                 QuizNextButton(
                     onClick = {
                         onNextClick()
-                        if (currentIndex < questions.size - 1) {
-                            currentIndex++
-                            feedbackType = FeedbackType.NONE
-                            selectedOption = null
-                        } else {
-                            showResultDialog = true
-                            onQuizCompleted(score)
-                        }
+                        currentIndex++
+                        feedbackType = FeedbackType.NONE
+                        selectedOption = null
                     }
                 )
                 Spacer(modifier = Modifier.height(32.dp))
