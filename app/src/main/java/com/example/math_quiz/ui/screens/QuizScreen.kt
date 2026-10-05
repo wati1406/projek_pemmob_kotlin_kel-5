@@ -362,7 +362,13 @@ fun QuizTopBar(
                 .clickable { onBackClick() }
         )
 
-        // ── Badge Level
+        // ── Badge Level (Easy, Medium, Hard sesuai level yang dipilih)
+        val levelText = when (level) {
+            1 -> "Easy"
+            2 -> "Medium"
+            3 -> "Hard"
+            else -> "Easy"
+        }
         Box(
             modifier = Modifier
                 .height(36.dp)
@@ -374,7 +380,7 @@ fun QuizTopBar(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "Level $level",
+                text = levelText,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = badgeText,
