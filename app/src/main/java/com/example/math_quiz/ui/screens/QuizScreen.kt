@@ -84,7 +84,9 @@ fun QuizScreen(
     onWrongAnswer: () -> Unit = {},
     onTimeUp: () -> Unit = {},
     onNextClick: () -> Unit = {},
-    onQuizCompleted: (Int) -> Unit = {}
+    onQuizCompleted: (Int) -> Unit = {},
+    onNextLevel: () -> Unit = {},
+    onHome: () -> Unit = {}
 ) {
     // Menentukan durasi waktu berdasarkan tingkat kesulitan:
     // Easy (Level 1) = 15 detik, Medium (Level 2) = 13 detik, Hard (Level 3) = 10 detik
@@ -101,14 +103,15 @@ fun QuizScreen(
     var restartKey by remember { mutableIntStateOf(0) }
 
     val questions = remember(level, restartKey) { QuizRepository.getQuestionsByLevel(level) }
-    var currentIndex by remember { mutableIntStateOf(0) }
+    var currentIndex by remember(level, restartKey) { mutableIntStateOf(0) }
     val currentQuestion = questions.getOrElse(currentIndex) { questions.first() }
 
     val questionNumber = currentIndex + 1
     val totalQuestions = questions.size
 
     // Skor dinamis: bertambah +10 setiap jawaban benar
-    var score by remember { mutableIntStateOf(0) }
+    var score by remember(level, restartKey) { mutableIntStateOf(0) }
+    var showResultDialog by remember(level, restartKey) { mutableStateOf(false) }
 
     // State jawaban dan feedback
     var selectedOption by remember(currentIndex, restartKey) { mutableStateOf<String?>(null) }
@@ -266,6 +269,7 @@ fun QuizScreen(
                             feedbackType = FeedbackType.NONE
                             selectedOption = null
                         } else {
+                            showResultDialog = true
                             onQuizCompleted(score)
                         }
                     }
@@ -292,6 +296,32 @@ fun QuizScreen(
                 onExit = {
                     isPaused = false
                     onBackClick()
+                }
+            )
+        }
+
+        // Popup Hasil Quiz (latar belakang tetap halaman Quiz Screen)
+        if (showResultDialog) {
+            QuizResultDialog(
+                score = score,
+                onNextLevel = {
+                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                    showResultDialog = false
+                    onNextLevel()
+                },
+                onPlayAgain = {
+                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                    showResultDialog = false
+                    currentIndex = 0
+                    score = 0
+                    restartKey++
+                    feedbackType = FeedbackType.NONE
+                    selectedOption = null
+                },
+                onHome = {
+                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
+                    showResultDialog = false
+                    onHome()
                 }
             )
         }

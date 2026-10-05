@@ -147,23 +147,40 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onQuizCompleted = { score ->
                                     finalScore = score
-                                    currentScreen = "RESULT"
+                                    // Pop-up ditampilkan langsung di atas QuizScreen
+                                },
+                                onNextLevel = {
+                                    if (selectedLevel < 3) {
+                                        selectedLevel++
+                                    } else {
+                                        currentScreen = "LEVEL_SELECTION"
+                                    }
+                                },
+                                onHome = {
+                                    currentScreen = "MAIN_MENU"
                                 }
                             )
                         }
 
                         "RESULT" -> {
-                            // Tampilkan Main Menu di latar belakang
-                            MainMenuScreen(
+                            // Tetap tampilkan QuizScreen di latar belakang
+                            QuizScreen(
+                                level = selectedLevel,
                                 modifier = Modifier.padding(innerPadding),
-                                currentLevel = 3,
-                                onPlayClick = {
+                                onBackClick = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
                                     currentScreen = "LEVEL_SELECTION"
                                 },
-                                onSettingsClick = {
-                                    SoundManager.playSfx(SoundManager.SFX.BUTTON)
-                                    currentScreen = "SETTINGS"
+                                onNextLevel = {
+                                    if (selectedLevel < 3) {
+                                        selectedLevel++
+                                    } else {
+                                        currentScreen = "LEVEL_SELECTION"
+                                    }
+                                    currentScreen = "QUIZ"
+                                },
+                                onHome = {
+                                    currentScreen = "MAIN_MENU"
                                 }
                             )
 
@@ -171,7 +188,12 @@ class MainActivity : ComponentActivity() {
                                 score = finalScore,
                                 onNextLevel = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
-                                    currentScreen = "MAIN_MENU"
+                                    if (selectedLevel < 3) {
+                                        selectedLevel++
+                                    } else {
+                                        currentScreen = "LEVEL_SELECTION"
+                                    }
+                                    currentScreen = "QUIZ"
                                 },
                                 onPlayAgain = {
                                     SoundManager.playSfx(SoundManager.SFX.BUTTON)
