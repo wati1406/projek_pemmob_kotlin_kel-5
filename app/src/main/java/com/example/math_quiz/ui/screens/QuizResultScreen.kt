@@ -18,11 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -117,56 +118,82 @@ fun QuizResultDialog(
             }
         }
 
-        // Card putih
+        // ── Card utama ────────────────────────────────────────────────────────
         Box(
             modifier = Modifier
                 .fillMaxWidth(0.90f)
                 .wrapContentHeight()
-                .shadow(18.dp, RoundedCornerShape(32.dp), spotColor = Color(0x55000000))
-                .background(Color.White, RoundedCornerShape(32.dp))
+                .shadow(24.dp, RoundedCornerShape(28.dp), spotColor = Color(0x66000000))
+                .clip(RoundedCornerShape(28.dp))
+                .background(Color.White)
         ) {
-            // Layer 1: Dekorasi di belakang
+            // Layer 1: Dekorasi animasi di belakang
             CardDecorations()
 
-            // Layer 2: Konten
+            // Layer 2: Konten utama
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 22.dp, vertical = 20.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                // ── Piala — di dalam card, ATAS teks ─────────────────────────
-                Image(
-                    painter            = painterResource(id = R.drawable.piala),
-                    contentDescription = "Gold Trophy",
-                    modifier           = Modifier
-                        .size(90.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+                // ── Header gradient ───────────────────────────────────────────
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            Brush.verticalGradient(
+                                listOf(Color(0xFF1E40AF), Color(0xFF3B82F6))
+                            ),
+                            RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+                        )
+                        .padding(vertical = 22.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        // Trophy di dalam lingkaran emas
+                        Box(
+                            modifier = Modifier
+                                .size(88.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    Brush.radialGradient(
+                                        listOf(Color(0xFFFDE68A), Color(0xFFF59E0B))
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                painter            = painterResource(id = R.drawable.piala),
+                                contentDescription = "Trophy",
+                                modifier           = Modifier.size(62.dp)
+                            )
+                        }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                // ── Judul ─────────────────────────────────────────────────────
+                        Text(
+                            text       = "Quiz Complete!",
+                            fontFamily = FredokaFontFamily,
+                            fontSize   = 26.sp,
+                            fontWeight = FontWeight.Black,
+                            color      = Color.White
+                        )
+                    }
+                }
+
+                // ── Score section ─────────────────────────────────────────────
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Text(
-                    text       = "Quiz Complete!",
-                    fontFamily = FredokaFontFamily,
-                    fontSize   = 28.sp,
-                    fontWeight = FontWeight.Black,
-                    color      = Color(0xFF1E3A8A)
+                    text          = "YOUR SCORE",
+                    fontFamily    = FredokaFontFamily,
+                    fontSize      = 13.sp,
+                    fontWeight    = FontWeight.Bold,
+                    color         = Color(0xFF94A3B8),
+                    letterSpacing = 1.5.sp
                 )
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                // ── Label skor ────────────────────────────────────────────────
-                Text(
-                    text       = "Score",
-                    fontFamily = FredokaFontFamily,
-                    fontSize   = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color      = Color(0xFF64748B)
-                )
-
-                // ── Angka skor ────────────────────────────────────────────────
                 Row(
                     verticalAlignment     = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -174,124 +201,131 @@ fun QuizResultDialog(
                     Image(
                         painter            = painterResource(id = R.drawable.kiri),
                         contentDescription = null,
-                        modifier           = Modifier.size(32.dp)
+                        modifier           = Modifier.size(28.dp)
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text       = "$score",
                         fontFamily = FredokaFontFamily,
-                        fontSize   = 68.sp,
+                        fontSize   = 72.sp,
                         fontWeight = FontWeight.Black,
                         color      = Color(0xFF1E3A8A)
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Image(
                         painter            = painterResource(id = R.drawable.kanan),
                         contentDescription = null,
-                        modifier           = Modifier.size(32.dp)
+                        modifier           = Modifier.size(28.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                // ── Performance pill ──────────────────────────────────────────
+                // ── Performance badge ─────────────────────────────────────────
                 val (pillText, pillBg, pillColor) = when {
-                    score >= 90 -> Triple("⭐ Perfect!",     Color(0xFFFEF9C3), Color(0xFFCA8A04))
-                    score >= 70 -> Triple("🎉 Great Job!",   Color(0xFFDCFCE7), Color(0xFF16A34A))
-                    score >= 50 -> Triple("👍 Good Job!",    Color(0xFFDBEAFE), Color(0xFF1D4ED8))
-                    else        -> Triple("💪 Keep Trying!", Color(0xFFFFE4E6), Color(0xFFE11D48))
+                    score >= 90 -> Triple("⭐  Perfect!",     Color(0xFFFEF9C3), Color(0xFFCA8A04))
+                    score >= 70 -> Triple("🎉  Great Job!",   Color(0xFFDCFCE7), Color(0xFF16A34A))
+                    score >= 50 -> Triple("👍  Good Job!",    Color(0xFFDBEAFE), Color(0xFF1D4ED8))
+                    else        -> Triple("💪  Keep Trying!", Color(0xFFFFE4E6), Color(0xFFE11D48))
                 }
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(pillBg)
-                        .padding(horizontal = 20.dp, vertical = 8.dp)
+                        .padding(horizontal = 22.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text       = pillText,
                         fontFamily = FredokaFontFamily,
-                        fontSize   = 16.sp,
+                        fontSize   = 15.sp,
                         fontWeight = FontWeight.Black,
                         color      = pillColor
                     )
                 }
 
+                // ── Divider ───────────────────────────────────────────────────
+                Spacer(modifier = Modifier.height(18.dp))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .height(1.dp)
+                        .background(Color(0xFFE2E8F0))
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // ── Tombol-tombol ─────────────────────────────────────────────
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ResultButton(
+                        label          = "⚡  Next Level",
+                        gradientColors = listOf(Color(0xFF16A34A), Color(0xFF22C55E)),
+                        textColor      = Color.White,
+                        onClick        = onNextLevel
+                    )
+                    ResultButton(
+                        label          = "🔄  Play Again",
+                        gradientColors = listOf(Color(0xFF1D4ED8), Color(0xFF3B82F6)),
+                        textColor      = Color.White,
+                        onClick        = onPlayAgain
+                    )
+                    ResultButton(
+                        label          = "🏠  Home",
+                        gradientColors = null,
+                        textColor      = Color(0xFF1E3A8A),
+                        onClick        = onHome
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(20.dp))
-
-                // ── Tombol NEXT LEVEL ─────────────────────────────────────────
-                ResultMenuButton(
-                    imageResId      = R.drawable.btn_next_level,
-                    textFallback    = "NEXT LEVEL",
-                    backgroundColor = Color(0xFF22C55E),
-                    onClick         = onNextLevel
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-
-                // ── Tombol PLAY AGAIN ─────────────────────────────────────────
-                ResultMenuButton(
-                    imageResId      = R.drawable.btn_play_again,
-                    textFallback    = "PLAY AGAIN",
-                    backgroundColor = Color(0xFF3B82F6),
-                    onClick         = onPlayAgain
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-
-                // ── Tombol HOME ───────────────────────────────────────────────
-                ResultMenuButton(
-                    imageResId      = R.drawable.btn_home,
-                    textFallback    = "HOME",
-                    backgroundColor = Color.White,
-                    isHome          = true,
-                    onClick         = onHome
-                )
             }
         }
     }
 }
 
-// ── Tombol menu hasil ─────────────────────────────────────────────────────────
+// ── Tombol generik untuk result dialog ───────────────────────────────────────
 @Composable
-private fun ResultMenuButton(
-    imageResId: Int?,
-    textFallback: String,
-    backgroundColor: Color,
-    isHome: Boolean = false,
+private fun ResultButton(
+    label: String,
+    gradientColors: List<Color>?,
+    textColor: Color,
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .scale(if (isPressed) 0.94f else 1f)
-            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick),
+        modifier = if (gradientColors != null) {
+            Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .scale(if (isPressed) 0.96f else 1f)
+                .shadow(if (isPressed) 2.dp else 5.dp, RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp))
+                .background(Brush.horizontalGradient(gradientColors))
+                .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .height(52.dp)
+                .scale(if (isPressed) 0.96f else 1f)
+                .clip(RoundedCornerShape(16.dp))
+                .background(Color(0xFFF1F5F9))
+                .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+        },
         contentAlignment = Alignment.Center
     ) {
-        if (imageResId != null) {
-            Image(
-                painter            = painterResource(id = imageResId),
-                contentDescription = textFallback,
-                modifier           = Modifier.fillMaxWidth().height(62.dp)
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(62.dp)
-                    .shadow(6.dp, CircleShape)
-                    .clip(CircleShape)
-                    .background(backgroundColor),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text       = textFallback,
-                    color      = if (isHome) Color(0xFF1E3A8A) else Color.White,
-                    fontWeight = FontWeight.Black,
-                    fontSize   = 20.sp
-                )
-            }
-        }
+        Text(
+            text       = label,
+            fontFamily = FredokaFontFamily,
+            fontSize   = 17.sp,
+            fontWeight = FontWeight.Black,
+            color      = textColor,
+            textAlign  = TextAlign.Center
+        )
     }
 }
 
